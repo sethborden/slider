@@ -12,10 +12,9 @@ Once you have the subreddits you want to fetch from click fetch, this takes awhi
 
 In image viewing mode:
 
-S - Starts or stops the slideshow
-Right - Next image
-Left - Previous image
-Up - Start viewing the album
-Down - Stop viewing the album
-Esc - Exit the viewing window
-This can also be done by clicking outside the viewing area.
+- S - Starts or stops the slideshow
+- Right - Next image
+- Left - Previous image
+- Up - Start viewing the album
+- Down - Stop viewing the album
+- Esc - Exit the viewing window (This can also be done by clicking outside the viewing area.)
