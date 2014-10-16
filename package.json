@@ -2,12 +2,16 @@
   "name": "slidershower",
   "version": "1.0.0",
   "description": "An image management app ",
-  "main": "jquery-1.9.1.js",
+  "main": "js/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Seth Borden",
   "license": "MIT",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/sethborden/slider"
+  },
   "devDependencies": {
     "browser-sync": "^1.5.2",
     "gulp": "^3.8.8",
