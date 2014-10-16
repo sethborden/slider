@@ -18,3 +18,6 @@ In image viewing mode:
 - Up - Start viewing the album
 - Down - Stop viewing the album
 - Esc - Exit the viewing window (This can also be done by clicking outside the viewing area.)
+
+
+[Here's](http://sethborden.github.io/slider/) working thing.
