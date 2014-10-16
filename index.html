@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.tagsinput.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script src="all.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="header-info"></div>
+</div>
+    <div class="reddit-form">
+    <form id="reddit-form">
+        <div class="text-bit">
+            <div class="fake-label">Subreddits</div>
+            <input id="subreddit" value="diy" type="text">
+        </div>
+        <div class="text-bit">
+            <label for="time-frame">Time Frame</label>
+            <select id="time-frame" name="time-frame">
+                <option value="none">None</option>
+                <option value="all">All Time</option>
+                <option value="year">Year</option>
+                <option value="month">Month</option>
+                <option value="week">Week</option>
+                <option value="day">Day</option>
+            </select>
+        </div>
+        <div class="text-bit">
+            <label for="history-depth">Links to Grab</label>
+            <input id="history-depth" value="10" type="text">
+        </div>
+        <div class="text-bit">
+            <label for="slide-duration">Slide Duration</label>
+            <input id="slide-duration" value="3" type="text">
+        </div>
+        <div class="text-bit">
+            <label for="fit-to-window">Scale image up?</label>
+            <input id="fit-to-window" type="checkbox">
+        </div>
+        <div class="text-bit">
+            <label for="unroll-albums">Unroll albums?</label>
+            <input id="unroll-albums" type="checkbox">
+        </div>
+        <div class="form-buttons">
+            <button id="fetchButton">Fetch</button>
+            <button id="slide-show-button">Slideshow</button>
+        </div>
+        <div id="progress-msg"> </div>
+    </form>
+</div>
+<div id="images"></div>
+<div id="modal-window">
+    <div id="timer-bar"></div>
+    <div id="modal-overlay"></div>
+    <div id="next-button">next</div>
+    <div id="prev-button">prev</div>
+    <span  id="slideshow-state">&#9654;</span>
+    <div id="modal-title"><span id="title"></span><span id="title-toggle">-</span></div>
+    <div id="modal-sub"></div>
+    <a id="modal-link" href="#"><img src="reddit.png" alt="See comments on reddit.com"></a>
+    <a id="imgur-link" href="#"><img src="imgur.png" alt="See comments on reddit.com"></a>
+    <div id="first-modal-image"></div>
+    <div id="second-modal-image"></div>
+</div>
+</body>
+</html>
