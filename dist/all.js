@@ -438,7 +438,7 @@ $(document).ready(function() {
         ss.reset(); //this is mostly doing ss.images = [];
         toggleMessage('Loading images...');
         window.setTimeout(function() {
-            ss.gatherAllImages();
+            ss.getRedditInfo();
         }, 200);
     });
 
@@ -700,8 +700,8 @@ $(document).ready(function() {
         $(img).load(function() {
             setupImage(mod, img, i);
             if (transition) {
-                $(ss.activeImgEl).fadeToggle('fast');
-                $(ss.nextImgEl).fadeToggle('fast');
+                $(ss.activeImgEl).fadeToggle('slow');
+                $(ss.nextImgEl).fadeToggle('slow');
             }
         });
         img.src = i.url;
@@ -784,9 +784,9 @@ $(document).ready(function() {
         var msgBox = $('#messages');
         if (msgBox.css('display') === 'none') {
             msgBox.text(text);
-            msgBox.show();
+            msgBox.fadeIn();
         } else {
-            msgBox.hide();
+            msgBox.fadeOut();
         }
     }
 
@@ -826,10 +826,7 @@ $(document).ready(function() {
     };
 });
 
-$(document).on('foo', function(e) {
-    console.log('foo called');
-});
-
+//TODO these should all be passed in as part of a config
 var SliderShower = function() {
     this.images = [];
     this.activeImage = 0;
@@ -875,12 +872,31 @@ SliderShower.prototype.setNextPage = function(after) {
     }
 };
 
-SliderShower.prototype.getSinglePageFromReddit = function() {
-    console.log('Getting', this.nextPage);
+SliderShower.prototype.getRedditInfo = function() {
     var that = this;
-    $.ajax({url: this.nextPage, async: false, context: that})
-     .done(that.processRedditPage)
-     .error(that.loadError);
+    var currentJSON = $.ajax({url: that.nextPage, async: false});
+    currentJSON.fail(function(e){
+        console.log("failure");
+        document.dispatchEvent(new Event('foo'));
+    });
+    currentJSON.done(function(e) {
+        var images = that.filterImageLinks(e.data.children);
+        images.forEach(function(i) {
+            if (that.images.length < that.linksToGrab) {
+                that.images.push(i);
+                $('#images').append(imageBoxFactory(i, that.images.length - 1));
+            }
+        });
+    })
+    .then(function(e) {
+        that.setNextPage(e.data.after);
+        console.log(that.nextPage);
+        if (that.images.length < that.linksToGrab) {
+            that.getRedditInfo();
+        } else {
+            document.dispatchEvent(new Event('foo'));
+        }
+    });
 };
 
 /**
@@ -905,7 +921,7 @@ SliderShower.prototype.filterImageLinks = function(links) {
                 link.data.album = data.album;
                 link.data.album.title = link.data.title;
                 out_links.push(link);
-            });
+            }).fail(function(data) {});
         } else if (link.data.url.match(/.*\.(?:png|jpg|jpeg|gif)/)) {
             out_links.push(link);
         }
@@ -913,15 +929,10 @@ SliderShower.prototype.filterImageLinks = function(links) {
     return out_links;
 };
 
-SliderShower.prototype.processRedditPage = function(data) {
-    var links = data.data.children;
-    var images = this.filterImageLinks(links);
-    var base = this.images.length;
+SliderShower.prototype.processRedditPage = function(images, base) {
     for (var i = 0, l = images.length; i < l; i++) {
-        $('#images').append(imageBoxFactory(images[i], i + base));
-        this.images.push(images[i]);
     }
-    this.setNextPage(data.data.after);
+    //this.setNextPage(data.data.after);
 };
 
 SliderShower.prototype.loadError = function() {
@@ -929,10 +940,7 @@ SliderShower.prototype.loadError = function() {
 };
 
 SliderShower.prototype.gatherAllImages = function() {
-    while (this.images.length < this.linksToGrab) {
-        this.getSinglePageFromReddit();
-    }
-    document.dispatchEvent(new Event('foo'));
+    this.getSinglePageFromReddit();
 };
 
 SliderShower.prototype.reset = function() {

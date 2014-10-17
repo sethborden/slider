@@ -98,7 +98,7 @@ $(document).ready(function() {
         ss.reset(); //this is mostly doing ss.images = [];
         toggleMessage('Loading images...');
         window.setTimeout(function() {
-            ss.gatherAllImages();
+            ss.getRedditInfo();
         }, 200);
     });
 
@@ -360,8 +360,8 @@ $(document).ready(function() {
         $(img).load(function() {
             setupImage(mod, img, i);
             if (transition) {
-                $(ss.activeImgEl).fadeToggle('fast');
-                $(ss.nextImgEl).fadeToggle('fast');
+                $(ss.activeImgEl).fadeToggle('slow');
+                $(ss.nextImgEl).fadeToggle('slow');
             }
         });
         img.src = i.url;
@@ -444,9 +444,9 @@ $(document).ready(function() {
         var msgBox = $('#messages');
         if (msgBox.css('display') === 'none') {
             msgBox.text(text);
-            msgBox.show();
+            msgBox.fadeIn();
         } else {
-            msgBox.hide();
+            msgBox.fadeOut();
         }
     }
 
@@ -484,8 +484,4 @@ $(document).ready(function() {
         $div.append($inf);
         return $div;
     };
-});
-
-$(document).on('foo', function(e) {
-    console.log('foo called');
 });
