@@ -69,6 +69,10 @@ $(document).ready(function() {
         }
     });
 
+    $(document).on('foo', function() {
+        toggleMessage();
+    });
+
     $('#modal-overlay').click(function() {
         endSlideShow();
         $('body').css('overflow', 'auto');
@@ -92,9 +96,10 @@ $(document).ready(function() {
         e.preventDefault();
         hideForm();
         ss.reset(); //this is mostly doing ss.images = [];
-        //TODO might be better to have the gAI function pass back the links and
-        //then have something in this file add them into the view....
-        ss.gatherAllImages();
+        toggleMessage('Loading images...');
+        window.setTimeout(function() {
+            ss.gatherAllImages();
+        }, 200);
     });
 
     $('.reddit-form').mouseleave(function(e) {
@@ -431,6 +436,20 @@ $(document).ready(function() {
         $('.loading').remove();
     }
 
+    /*
+     * Show the message box
+     *
+     */
+    function toggleMessage(text) {
+        var msgBox = $('#messages');
+        if (msgBox.css('display') === 'none') {
+            msgBox.text(text);
+            msgBox.show();
+        } else {
+            msgBox.hide();
+        }
+    }
+
     //this would be so much easier with a fucking template system....
     //TODO use mustache or handlebars to simplify this bit
     imageBoxFactory = function(link, index) {
@@ -465,4 +484,8 @@ $(document).ready(function() {
         $div.append($inf);
         return $div;
     };
+});
+
+$(document).on('foo', function(e) {
+    console.log('foo called');
 });

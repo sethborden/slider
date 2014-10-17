@@ -2,6 +2,22 @@ body {
     margin: 0;
 }
 
+#messages {
+    position: fixed;
+    margin-right: auto;
+    margin-left: auto;
+    top: 300px;
+    left: 45%;
+    width: 10%;
+    height: 75px;
+    border: 2px solid black;
+    border-radius: 5px;
+    background: red;
+    z-index: 50;
+    text-align: center;
+    display: none;
+}
+
 .header {
     width: 100%;
     color: #638421;

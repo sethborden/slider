@@ -44,6 +44,7 @@ SliderShower.prototype.setNextPage = function(after) {
 };
 
 SliderShower.prototype.getSinglePageFromReddit = function() {
+    console.log('Getting', this.nextPage);
     var that = this;
     $.ajax({url: this.nextPage, async: false, context: that})
      .done(that.processRedditPage)
@@ -99,6 +100,7 @@ SliderShower.prototype.gatherAllImages = function() {
     while (this.images.length < this.linksToGrab) {
         this.getSinglePageFromReddit();
     }
+    document.dispatchEvent(new Event('foo'));
 };
 
 SliderShower.prototype.reset = function() {
