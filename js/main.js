@@ -1,11 +1,4 @@
 $(document).ready(function() {
-
-    /***************************
-     *
-     * Controller part of our ghetto MVC....
-     *
-     ***************************/
-
     /***************************
      *
      * Actual setup stuff that gets called when the DOM is ready
@@ -41,6 +34,11 @@ $(document).ready(function() {
         ss.slideDuration = $(this).val();
     });
 
+    $('#search-term').change(function(){
+        ss.searchTerm = $(this).val();
+        ss.genBaseUrl();
+    });
+
     /*************************
      *
      *  Click handlers and other UI control features
@@ -60,7 +58,7 @@ $(document).ready(function() {
             } else if (e.keyCode === 40 && ss.albumMode) {
                 exitAlbumMode();
             } else if (e.keyCode === 27) {
-                if (slideShow) toggleSlideShow();
+                endSlideShow();
                 $('body').css('overflow', 'auto');
                 $('#modal-window').hide();
             } else if (e.keyCode === 83) {
@@ -79,10 +77,12 @@ $(document).ready(function() {
         $('#modal-window').hide();
     });
 
-    //TODO this should fetch and then start the slideshoe
+    //TODO getRedditInfo should resolve as a promise so that other poop can be
+    //called here.
     $('#slide-show-button').click(function(e) {
         e.preventDefault();
         hideForm();
+        ss.reset();
     });
 
     function hideForm() {
@@ -169,12 +169,22 @@ $(document).ready(function() {
     }
 
     function startSlideShow() {
-        var duration = ss.slideDuration * 1000;
-        $('#slideshow-state').html('&#9632;');
         ss.slideShowActive = true;
-        $('#timer-bar').animate({'width': '100%'}, (duration - 50), 'linear');
-        slideShow = setInterval(nextModalImage, duration);
+        $('#slideshow-state').html('&#9632;');
+        $(document).trigger('imageLoaded');
     }
+
+    $(document).on('imageLoaded', function() {
+        if (ss.slideShowActive) {
+            $('#timer-bar')
+            .animate({'width': '100%'}, {
+                duration: (ss.slideDuration * 1000),
+                easing: 'linear',
+            }).promise().done(function() {
+                if (ss.slideShowActive) nextModalImage();
+            });
+        }
+    });
 
     /**
      * Scales an image so that if will fit inside a given element
@@ -224,11 +234,10 @@ $(document).ready(function() {
      * variable.
      */
     function endSlideShow() {
-        clearInterval(slideShow);
-        $('#slideshow-state').html('&#9654;');
-        $('#timer-bar').stop();
-        $('#timer-bar').width(0);
         ss.slideShowActive = false;
+        $('#slideshow-state').html('&#9654;');
+        $('#timer-bar').stop(true, true);
+        $('#timer-bar').width(0);
     }
 
     function enterAlbumMode() {
@@ -264,12 +273,10 @@ $(document).ready(function() {
      *That way, when we auto-unroll albums, you just need to change the first image link to the second link, etc.
      *If we're not auto-unrolling, "Up" trigges the unroll, etc.
      */
+
     function nextModalImage() {
         $('#imgur-link').hide();
-        if (ss.slideShowActive) {
-            $('#timer-bar').width('0');
-            $('#timer-bar').animate({'width': '100%'}, (ss.slideDuration * 1000) - 50, 'linear');
-        }
+        if (ss.slideShowActive) $('#timer-bar').width('0');
         var i = ss.images[ss.activeImage].data;
         if ((ss.unrollAlbums || ss.albumMode) && i.hasOwnProperty('album')) {
             i.j = typeof i.j === 'undefined' ? 0 : i.j; //j is album index
@@ -355,13 +362,17 @@ $(document).ready(function() {
         }
         var i = ss.images[ss.activeImage].data;
         var mod = ss.activeImgEl;
+        showLoader(ss.activeImgEl);
+        showLoader(ss.nextImgEl);
         var img = new Image();
-        showLoader(mod);
         $(img).load(function() {
             setupImage(mod, img, i);
             if (transition) {
                 $(ss.activeImgEl).fadeToggle('slow');
-                $(ss.nextImgEl).fadeToggle('slow');
+                $(ss.nextImgEl)
+                .fadeToggle({duration: 'slow', complete: function() {
+                    $(document).trigger('imageLoaded');
+                }});
             }
         });
         img.src = i.url;
@@ -385,7 +396,7 @@ $(document).ready(function() {
         modal.css('left', (w.width() - modal.width()) / 2 + "px");
         $('#title').html(setupImageTitle(data));
         $('#modal-sub').text(data.subreddit);
-        $('#modal-link').attr('href', data.permalink);
+        $('#modal-link').attr('href', "http://www.reddit.com" + data.permalink);
         if (data.hasOwnProperty('album_url')) {
             $('#imgur-link').show().attr('href', data.album_url);
         }
@@ -428,8 +439,6 @@ $(document).ready(function() {
     }
 
     /**
-     * TODO: Allow to optionally call this on one Node or an array of Nodes.
-     * TODO: Allow use of a custom (and optional) loader class name
      * Utility function to hide all loading icons in the DOM.
      */
     function hideLoaders() {

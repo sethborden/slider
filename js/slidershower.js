@@ -6,6 +6,7 @@ var SliderShower = function() {
     this.slideShowActive = false;
     this.nextPage = '';
     this.subreddits = $('#subreddit').val().split(/\s/);
+    this.searchTerm = $('#search-term').val();
     this.timeFrame = $('#reddit-form select[name="time-frame"]').val();
     this.linksToGrab = $('#history-depth').val();
     this.scaleUp = $('#fit-to-window').is(":checked");
@@ -27,6 +28,19 @@ SliderShower.prototype.genBaseUrl = function() {
                this.getSubreddits() +
                "/top/.json?sort=top&t=" +
                this.timeFrame;
+    } else if (this.searchTerm !== '' && this.timeFrame !== 'none') {
+        return "http://www.reddit.com/r/" +
+               this.getSubreddits() +
+               "/search.json?q=" +
+               this.searchTerm.replace(' ', '+') +
+               "&restrict_sr=on&sort=relevance&t=" +
+               this.timeFrame;
+    } else if (this.searchTerm !== '') {
+        return "http://www.reddit.com/r/" +
+               this.getSubreddits() +
+               "/search.json?q=" +
+               this.searchTerm.replace(' ', '+') +
+               "&restrict_sr=on&sort=relevance&t=all";
     } else {
         return "http://www.reddit.com/r/" +
                this.getSubreddits() +
@@ -48,7 +62,6 @@ SliderShower.prototype.getRedditInfo = function() {
     var that = this;
     var currentJSON = $.ajax({url: that.nextPage, async: false});
     currentJSON.fail(function(e){
-        console.log("failure");
         document.dispatchEvent(new Event('foo'));
     });
     currentJSON.done(function(e) {
@@ -61,10 +74,13 @@ SliderShower.prototype.getRedditInfo = function() {
         });
     })
     .then(function(e) {
-        that.setNextPage(e.data.after);
-        console.log(that.nextPage);
-        if (that.images.length < that.linksToGrab) {
-            that.getRedditInfo();
+        if (e.data.after !== null) {
+            that.setNextPage(e.data.after);
+            if (that.images.length < that.linksToGrab) {
+                that.getRedditInfo();
+            } else {
+                document.dispatchEvent(new Event('foo'));
+            }
         } else {
             document.dispatchEvent(new Event('foo'));
         }
@@ -87,13 +103,21 @@ SliderShower.prototype.filterImageLinks = function(links) {
         if (ar) {
             var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
             link.album_url = link.data.url;
-            $.ajax({url: apiUrl, async: false}).done(function(data) {
-                link.data.url = data.album.images[0].links.original;
-                link.data.thumbnail = data.album.images[0].links.small_square;
-                link.data.album = data.album;
-                link.data.album.title = link.data.title;
-                out_links.push(link);
-            }).fail(function(data) {});
+            $.ajax({url: apiUrl, async: false})
+            .success(function(data) {
+                try {
+                    link.data.url = data.album.images[0].links.original;
+                    link.data.thumbnail = data.album.images[0].links.small_square;
+                    link.data.album = data.album;
+                    link.data.album.title = link.data.title;
+                    out_links.push(link);
+                } catch (e) {
+                    //do nothing...probably a 404...
+                }
+            })
+            .fail(function(data) {
+                console.log(data);
+            });
         } else if (link.data.url.match(/.*\.(?:png|jpg|jpeg|gif)/)) {
             out_links.push(link);
         }

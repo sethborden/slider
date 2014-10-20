@@ -58,3 +58,5 @@ gulp.task('watch', function() {
 
 //default task
 gulp.task('default', ['lint', 'scripts', 'browser-sync', 'watch']);
+
+
