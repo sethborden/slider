@@ -4,74 +4,108 @@
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
-    <link rel="stylesheet" type="text/css" href="css/jquery.tagsinput.css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-tagsinput.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="all.js"></script>
 </head>
 <body>
-<div class="header">
-    <div class="header-info"></div>
-</div>
-    <div class="reddit-form">
-    <form id="reddit-form">
-        <div class="text-bit">
-            <div class="fake-label">Subreddits</div>
-            <input id="subreddit" value="earthporn" type="text">
+
+    <div class="header">
+        <div class="header-info"></div>
+    </div>
+
+    <div class="reddit-form highligh">
+    <form class="form-horizontal" role="form" id="reddit-form" >
+        <div class="form-group">
+            <label for="subreddit" class="col-sm-2 control-label">Subreddits</label>
+            <div class="col-sm-6">
+                <input placeholder="...                                " id="subreddit" value="earthporn" type="text" data-role="tagsinput">
+            </div>
         </div>
-        <div class="text-bit">
-            <label for="search-term">Search Term</label>
-            <input id="search-term" value="" type="text">
+
+        <div class="form-group">
+            <label for="search-term" class="col-sm-2 control-label">Search Term</label>
+            <div class="col-sm-6">
+                <input id="search-term" value="" type="text" class="form-control">
+            </div>
         </div>
-        <div class="text-bit">
-            <label for="time-frame">Time Frame</label>
-            <select id="time-frame" name="time-frame">
-                <option value="none">None</option>
-                <option value="all">All Time</option>
-                <option value="year">Year</option>
-                <option value="month">Month</option>
-                <option value="week">Week</option>
-                <option value="day">Day</option>
-            </select>
+
+        <div class="form-group">
+            <label for="time-frame" class="col-sm-2 control-label">Time Frame</label>
+            <div class="col-sm-2">
+                <select id="time-frame" class="form-control">
+                    <option value="none">None</option>
+                    <option value="all">All Time</option>
+                    <option value="year">Year</option>
+                    <option value="month">Month</option>
+                    <option value="week">Week</option>
+                    <option value="day">Day</option>
+                </select>
+            </div>
         </div>
-        <div class="text-bit">
-            <label for="history-depth">Links to Grab</label>
-            <input id="history-depth" value="20" type="text">
+
+        <div class="form-group">
+            <label for="history-depth" class="col-sm-2 control-label">Links to Grab</label>
+            <div class="col-sm-2">
+                <input id="history-depth" value="20" type="number" class="form-control">
+            </div>
         </div>
-        <div class="text-bit">
-            <label for="slide-duration">Slide Duration</label>
-            <input id="slide-duration" value="3" type="text">
+
+        <div class="form-group">
+            <label for="slide-duration" class="col-sm-2 control-label">Slide Duration</label>
+            <div class="col-sm-2">
+                <input id="slide-duration" value="3" type="number" class="form-control">
+            </div>
         </div>
-        <div class="text-bit">
-            <label for="fit-to-window">Scale image up?</label>
-            <input id="fit-to-window" type="checkbox">
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <div class="checkbox">
+                    <label>
+                        <input id="fit-to-window" type="checkbox"> Scale up images?
+                    </label>
+                </div>
+            </div>
         </div>
-        <div class="text-bit">
-            <label for="unroll-albums">Unroll albums?</label>
-            <input id="unroll-albums" type="checkbox">
+
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <div class="checkbox">
+                    <label>
+                        <input id="unroll-albums" type="checkbox"> Unroll albums?
+                    </label>
+                </div>
+            </div>
         </div>
-        <div class="form-buttons">
-            <button id="fetchButton">Fetch</button>
-            <button id="slide-show-button">Slideshow</button>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-8">
+                <button id="fetchButton" class="btn btn-primary">Fetch</button>
+                <button id="slide-show-button" class="btn btn-info">Slideshow</button>
+            </div>
         </div>
-        <div id="progress-msg"> </div>
     </form>
-</div>
-<div id="images"></div>
-<div id="messages"></div>
-<div id="modal-window">
-    <div id="timer-bar"></div>
-    <div id="modal-overlay"></div>
-    <div id="next-button">next</div>
-    <div id="prev-button">prev</div>
-    <span  id="slideshow-state">&#9654;</span>
-    <div id="modal-title"><span id="title"></span><span id="title-toggle">-</span></div>
-    <div id="modal-sub"></div>
-    <a id="modal-link" href="#"><img src="images/reddit.png" alt="See comments on reddit.com"></a>
-    <a id="imgur-link" href="#"><img src="images/imgur.png" alt="See comments on reddit.com"></a>
-    <div id="first-modal-image"></div>
-    <div id="second-modal-image"></div>
-</div>
+    </div>
+
+    <div id="images"></div>
+    <div id="messages"></div>
+    <div id="modal-window">
+        <div id="timer-bar"></div>
+        <div id="modal-overlay"></div>
+        <div id="next-button">next</div>
+        <div id="prev-button">prev</div>
+        <span  id="slideshow-state">&#9654;</span>
+        <div id="modal-title"><span id="title"></span><span id="title-toggle">-</span></div>
+        <div id="modal-sub"></div>
+        <a id="modal-link" href="#"><img src="images/reddit.png" alt="See comments on reddit.com"></a>
+        <a id="imgur-link" href="#"><img src="images/imgur.png" alt="See comments on reddit.com"></a>
+        <div id="first-modal-image"></div>
+        <div id="second-modal-image"></div>
+    </div>
 </body>
 </html>

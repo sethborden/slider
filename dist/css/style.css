@@ -2,6 +2,17 @@ body {
     margin: 0;
 }
 
+.reddit-form {
+    padding-top: 2em;
+    background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
+}
+
 #messages {
     position: fixed;
     margin-right: auto;
@@ -20,8 +31,8 @@ body {
 
 .header {
     width: 100%;
-    color: #638421;
-    background: #cde69c;
+    color: #eeeeee;
+    background: rgba(0,0,0,0.65);
     display: none;
     position: fixed;
     top: 0;
@@ -29,14 +40,6 @@ body {
 
 .header-info {
     padding: 5px;
-}
-
-.reddit-form {
-    position: fixed;
-    height: 280px;
-    width: 100%;
-    z-index: 20;
-    top: 0;
 }
 
 .image {
@@ -64,103 +67,11 @@ body {
     z-index: 20;
 }
 
-form#reddit-form {
-    padding: 8px;
-    border-bottom: 1px solid black;
-    background: #aaa;
-}
-
-#reddit-form label, .fake-label {
-    height: 24px;
-    font-size: 16px;
-    padding-top: 4px;
-    padding-right: 5px;
-    background: #ccc;
-    display: inline-block;
-    width: 120px;
-    text-align: right;
-    vertical-align: middle;
-    font-family: sans-serif;
-    border-radius: 5px;
-}
-
-#reddit-form label:last-of-type {
-    margin-top: 2px;
-}
-
-.fake-label {
-    vertical-align: top;
-}
-
-#reddit-form input[type="checkbox"] {
-    margin-left: 0;
-}
 #subreddit_tagsinput {
     margin-left: 131px;
     margin-top: -28px;
     margin-bottom: 2px;
     border-radius: 5px;
-}
-
-.form-buttons {
-    margin-left: 127px;
-    margin-top: 10px;
-}
-
-button {
-    height: 24px;
-    font-size: 16px;
-    width: auto;
-    padding-top: 2px;
-    padding-bottom: 5px;
-    background-color: #cde69c;
-    border-color: #a5d24a;
-    color: #638421;
-    border-radius: 5px;
-    border: 1px solid #;
-}
-
-#time-span {
-    margin-top: -18px;
-    margin-left: 124px;
-}
-.radioLabel {
-    display: inline-block;
-    width: 50px;
-    text-align: left;
-    vertical-align: middle;
-    font-family: sans-serif;
-    margin-right: 10px;
-}
-/* ick dirty filthy hackiness... I can't css.... */
-.radioLabel:first-of-type {
-    width: 60px;
-}
-
-.radioLabel:last-of-type {
-    width: 30px;
-}
-
-#reddit-form input[type='radio'] {
-    margin: 0 0 0 0;
-    border: 1px solid black;
-    vertical-align: middle;
-}
-
-#reddit-form input[type='text'],
-#reddit-form input[type='checkbox'] {
-    display: inline-block;
-    vertical-align: middle;
-    border: none;
-    font-family: sans-serif;
-    background: #ddd;
-    padding: 5px;
-    border-radius: 5px;
-    border:1px solid #CCC;
-}
-
-#reddit-form input[type='text']:focus {
-    outline-width: 0;
 }
 
 #modal-overlay {

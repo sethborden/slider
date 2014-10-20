@@ -130,17 +130,16 @@ $(document).ready(function() {
     });
 
     //Sets up the tag input area using the tag plugin
-    $('#subreddit').tagsInput({
-       'height':'100px',
-       'width':'500px',
-       'interactive':true,
-       'defaultText':'...',
-       'removeWithBackspace' : true,
-       'placeholderColor' : '#666666',
-       'delimiter': ' ',
-       'onChange' : function (){
-            ss.subreddits = $('#subreddit').val().split(/\s/);
-       }
+    $('#subreddit').tagsinput({
+        confirmKeys: [32, 13, 44]
+    });
+
+    $('input').on('itemAdded', function (){
+        ss.subreddits = $('#subreddit').val().split(/\s/);
+    });
+
+    $('input').on('itemRemoved', function (){
+        ss.subreddits = $('#subreddit').val().split(/\s/);
     });
 
     function clickOverlay(e) {
@@ -366,6 +365,7 @@ $(document).ready(function() {
         showLoader(ss.nextImgEl);
         var img = new Image();
         $(img).load(function() {
+            ss.imageState = 'loaded';
             setupImage(mod, img, i);
             if (transition) {
                 $(ss.activeImgEl).fadeToggle('slow');
@@ -375,6 +375,7 @@ $(document).ready(function() {
                 }});
             }
         });
+        ss.imageState = 'loading';
         img.src = i.url;
         if (i.source_type === "imgur album") {
         }
