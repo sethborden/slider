@@ -65,11 +65,13 @@ $(document).ready(function() {
             } else if (e.keyCode === 32 && !($('input').is(':focus'))) {
                 toggleSlideShow();
             }
-        } else {
+        } else if (!$('input').is(":focus")){
             if (e.keyCode === 83) {
                 $('.overlay:first').trigger('click');
                 toggleSlideShow();
             }
+        } else {
+            console.log(e.keyCode);
         }
     });
 
@@ -146,7 +148,8 @@ $(document).ready(function() {
 
     //Sets up the tag input area using the tag plugin
     $('#subreddit').tagsinput({
-        confirmKeys: [32, 13, 44]
+        confirmKeys: [34, 13, 44],
+        tagClass: 'big'
     });
 
     $('input').on('itemAdded', function (){
@@ -479,7 +482,7 @@ $(document).ready(function() {
     //TODO use mustache or handlebars to simplify this bit
     imageBoxFactory = function(link, index) {
         var data = link.data;
-        var descLen = 80;
+        var descLen = 65;
         var r = data.subreddit.length > 10 ?
                 data.subreddit.substr(0,10) + "..." :
                 data.subreddit;
