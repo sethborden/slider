@@ -1097,7 +1097,7 @@ $(document).ready(function() {
     //TODO use mustache or handlebars to simplify this bit
     imageBoxFactory = function(link, index) {
         var data = link.data;
-        var descLen = 80;
+        var descLen = 65;
         var r = data.subreddit.length > 10 ?
                 data.subreddit.substr(0,10) + "..." :
                 data.subreddit;
