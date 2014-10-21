@@ -655,6 +655,7 @@ $(document).ready(function() {
     $('#search-term').change(function(){
         ss.searchTerm = $(this).val();
         ss.genBaseUrl();
+        console.log(ss.genBaseUrl());
     });
 
     /*************************
@@ -680,6 +681,13 @@ $(document).ready(function() {
                 $('body').css('overflow', 'auto');
                 $('#modal-window').hide();
             } else if (e.keyCode === 83) {
+                toggleSlideShow();
+            } else if (e.keyCode === 32) {
+                toggleSlideShow();
+            }
+        } else {
+            if (e.keyCode === 83) {
+                $('.overlay:first').trigger('click');
                 toggleSlideShow();
             }
         }
@@ -714,6 +722,7 @@ $(document).ready(function() {
         e.preventDefault();
         hideForm();
         ss.reset(); //this is mostly doing ss.images = [];
+        $('.page-title').slideUp('fast');
         toggleMessage('Loading images...');
         window.setTimeout(function() {
             ss.getRedditInfo();
@@ -753,11 +762,11 @@ $(document).ready(function() {
     });
 
     $('input').on('itemAdded', function (){
-        ss.subreddits = $('#subreddit').val().split(/\s/);
+        ss.subreddits = $('#subreddit').val().split(',');
     });
 
     $('input').on('itemRemoved', function (){
-        ss.subreddits = $('#subreddit').val().split(/\s/);
+        ss.subreddits = $('#subreddit').val().split(',');
     });
 
     function clickOverlay(e) {

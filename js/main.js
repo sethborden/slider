@@ -37,6 +37,7 @@ $(document).ready(function() {
     $('#search-term').change(function(){
         ss.searchTerm = $(this).val();
         ss.genBaseUrl();
+        console.log(ss.genBaseUrl());
     });
 
     /*************************
@@ -103,6 +104,7 @@ $(document).ready(function() {
         e.preventDefault();
         hideForm();
         ss.reset(); //this is mostly doing ss.images = [];
+        $('.page-title').slideUp('fast');
         toggleMessage('Loading images...');
         window.setTimeout(function() {
             ss.getRedditInfo();
