@@ -63,6 +63,13 @@ $(document).ready(function() {
                 $('#modal-window').hide();
             } else if (e.keyCode === 83) {
                 toggleSlideShow();
+            } else if (e.keyCode === 32) {
+                toggleSlideShow();
+            }
+        } else {
+            if (e.keyCode === 83) {
+                $('.overlay:first').trigger('click');
+                toggleSlideShow();
             }
         }
     });
@@ -135,11 +142,11 @@ $(document).ready(function() {
     });
 
     $('input').on('itemAdded', function (){
-        ss.subreddits = $('#subreddit').val().split(/\s/);
+        ss.subreddits = $('#subreddit').val().split(',');
     });
 
     $('input').on('itemRemoved', function (){
-        ss.subreddits = $('#subreddit').val().split(/\s/);
+        ss.subreddits = $('#subreddit').val().split(',');
     });
 
     function clickOverlay(e) {
