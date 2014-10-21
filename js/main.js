@@ -64,7 +64,7 @@ $(document).ready(function() {
                 $('#modal-window').hide();
             } else if (e.keyCode === 83) {
                 toggleSlideShow();
-            } else if (e.keyCode === 32) {
+            } else if (e.keyCode === 32 && !($('input').is(':focus'))) {
                 toggleSlideShow();
             }
         } else {
@@ -123,8 +123,16 @@ $(document).ready(function() {
     });
 
     $('.header').mouseenter(function(e) {
-        $('.header').hide();
-        $('.reddit-form').slideDown('fast');
+        ss.headerTimeout = setTimeout(function(){
+            $('.header').hide();
+            $('.reddit-form').slideDown('fast');
+        }, 500)
+    });
+
+    $('.header').mouseleave(function(e) {
+        if (ss.headerTimeout) {
+            clearTimeout(ss.headerTimeout);
+        }
     });
 
     $('#title-toggle').click(function(e) {
