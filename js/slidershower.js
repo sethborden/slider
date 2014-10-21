@@ -23,17 +23,17 @@ SliderShower.prototype.getSubreddits = function() {
 };
 
 SliderShower.prototype.genBaseUrl = function() {
-    if (this.timeFrame !== 'none') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/top/.json?sort=top&t=" +
-               this.timeFrame;
-    } else if (this.searchTerm !== '' && this.timeFrame !== 'none') {
+    if (this.searchTerm !== '' && this.timeFrame !== 'none') {
         return "http://www.reddit.com/r/" +
                this.getSubreddits() +
                "/search.json?q=" +
                this.searchTerm.replace(' ', '+') +
                "&restrict_sr=on&sort=relevance&t=" +
+               this.timeFrame;
+    } else if (this.timeFrame !== 'none') {
+        return "http://www.reddit.com/r/" +
+               this.getSubreddits() +
+               "/top/.json?sort=top&t=" +
                this.timeFrame;
     } else if (this.searchTerm !== '') {
         return "http://www.reddit.com/r/" +
@@ -148,10 +148,3 @@ SliderShower.prototype.reset = function() {
 SliderShower.prototype.init = function() {
     this.setNextPage();
 };
-
-function getImgurAlbum(args) {
-    var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
-    $.ajax({url: apiUrl}).done(function(data) {
-        //console.dir(data);
-    });
-}

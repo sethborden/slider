@@ -21,6 +21,7 @@ body {
     width: 10%;
     height: 75px;
     border: 2px solid black;
+    color: black;
     border-radius: 5px;
     background: red;
     z-index: 50;
@@ -147,6 +148,7 @@ body {
     display: block;
 }
 
+/*need to fix this*/
 .overlay {
     -webkit-border-radius: 1em;
     height: 140px;

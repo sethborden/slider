@@ -36,8 +36,6 @@ $(document).ready(function() {
 
     $('#search-term').change(function(){
         ss.searchTerm = $(this).val();
-        ss.genBaseUrl();
-        console.log(ss.genBaseUrl());
     });
 
     /*************************
@@ -108,7 +106,7 @@ $(document).ready(function() {
         toggleMessage('Loading images...');
         window.setTimeout(function() {
             ss.getRedditInfo();
-        }, 200);
+        }, 300);
     });
 
     $('.reddit-form').mouseleave(function(e) {
@@ -126,7 +124,7 @@ $(document).ready(function() {
         ss.headerTimeout = setTimeout(function(){
             $('.header').hide();
             $('.reddit-form').slideDown('fast');
-        }, 500)
+        }, 500);
     });
 
     $('.header').mouseleave(function(e) {

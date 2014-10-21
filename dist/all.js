@@ -654,8 +654,6 @@ $(document).ready(function() {
 
     $('#search-term').change(function(){
         ss.searchTerm = $(this).val();
-        ss.genBaseUrl();
-        console.log(ss.genBaseUrl());
     });
 
     /*************************
@@ -682,7 +680,7 @@ $(document).ready(function() {
                 $('#modal-window').hide();
             } else if (e.keyCode === 83) {
                 toggleSlideShow();
-            } else if (e.keyCode === 32) {
+            } else if (e.keyCode === 32 && !($('input').is(':focus'))) {
                 toggleSlideShow();
             }
         } else {
@@ -726,7 +724,7 @@ $(document).ready(function() {
         toggleMessage('Loading images...');
         window.setTimeout(function() {
             ss.getRedditInfo();
-        }, 200);
+        }, 300);
     });
 
     $('.reddit-form').mouseleave(function(e) {
@@ -741,8 +739,16 @@ $(document).ready(function() {
     });
 
     $('.header').mouseenter(function(e) {
-        $('.header').hide();
-        $('.reddit-form').slideDown('fast');
+        ss.headerTimeout = setTimeout(function(){
+            $('.header').hide();
+            $('.reddit-form').slideDown('fast');
+        }, 500);
+    });
+
+    $('.header').mouseleave(function(e) {
+        if (ss.headerTimeout) {
+            clearTimeout(ss.headerTimeout);
+        }
     });
 
     $('#title-toggle').click(function(e) {
@@ -1148,17 +1154,17 @@ SliderShower.prototype.getSubreddits = function() {
 };
 
 SliderShower.prototype.genBaseUrl = function() {
-    if (this.timeFrame !== 'none') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/top/.json?sort=top&t=" +
-               this.timeFrame;
-    } else if (this.searchTerm !== '' && this.timeFrame !== 'none') {
+    if (this.searchTerm !== '' && this.timeFrame !== 'none') {
         return "http://www.reddit.com/r/" +
                this.getSubreddits() +
                "/search.json?q=" +
                this.searchTerm.replace(' ', '+') +
                "&restrict_sr=on&sort=relevance&t=" +
+               this.timeFrame;
+    } else if (this.timeFrame !== 'none') {
+        return "http://www.reddit.com/r/" +
+               this.getSubreddits() +
+               "/top/.json?sort=top&t=" +
                this.timeFrame;
     } else if (this.searchTerm !== '') {
         return "http://www.reddit.com/r/" +
@@ -1273,10 +1279,3 @@ SliderShower.prototype.reset = function() {
 SliderShower.prototype.init = function() {
     this.setNextPage();
 };
-
-function getImgurAlbum(args) {
-    var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
-    $.ajax({url: apiUrl}).done(function(data) {
-        //console.dir(data);
-    });
-}
