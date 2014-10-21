@@ -764,7 +764,8 @@ $(document).ready(function() {
 
     //Sets up the tag input area using the tag plugin
     $('#subreddit').tagsinput({
-        confirmKeys: [32, 13, 44]
+        confirmKeys: [34, 13, 44],
+        tagClass: 'big'
     });
 
     $('input').on('itemAdded', function (){
