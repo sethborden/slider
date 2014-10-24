@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="dist/css/bootstrap-tagsinput.css" />
     <link rel="stylesheet" type="text/css" href="dist/css/style.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="dist/all.min.js"></script>
 </head>
@@ -29,12 +27,33 @@
         </div>
     </div>
 
-    <div class="reddit-form highlight">
+    <div class="reddit-form">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+    <div class="panel panel-primary">
+    <div class="panel-heading">Picture Options</div>
+    <div class="panel-body">
+
     <form class="form-horizontal" role="form" id="reddit-form" >
+
         <div class="form-group">
-            <label for="subreddit" class="col-sm-2 control-label">Subreddits</label>
+            <div class="btn-group col-sm-2" data-toggle="buttons">
+                <label class="btn btn-primary active" for="subreddit-radio">
+                    <input type="radio" name="subreddit-radio" id="subreddit-radio" checked> Subreddits
+                </label>
+                <label class="btn btn-primary" for="user-radio">
+                    <input type="radio" name="user-radio" id="user-radio" checked>Users
+                </label>
+            </div>
             <div class="col-sm-6">
-                <input placeholder="...                                " id="subreddit" value="earthporn" type="text" data-role="tagsinput">
+                <input placeholder="...             " id="subreddit" value="earthporn" type="text" data-role="tagsinput">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="user" class="col-sm-2 control-label">Username</label>
+            <div class="col-sm-6">
+                <input id="user" value="" type="text" class="form-control">
             </div>
         </div>
 
@@ -77,7 +96,7 @@
             <div class="col-sm-offset-2 col-sm-8">
                 <div class="checkbox">
                     <label>
-                        <input id="fit-to-window" type="checkbox"> Scale up images?
+                        <input id="fit-to-window" type="checkbox" checked> Scale up images?
                     </label>
                 </div>
             </div>
@@ -100,23 +119,34 @@
                 <button id="slide-show-button" class="btn btn-info">Slideshow</button>
             </div>
         </div>
+    </div>
+    </div>
+    </div>
     </form>
     </div>
 
-    <div id="images"></div>
-    <div id="messages"></div>
+    <div id="images" class="col-sm-offset-1 col-sm-10"></div>
+    <div class="vcenter alert alert-info col-sm-offset-4 col-sm-4" id="messages">
+    </div>
     <div id="modal-window">
         <div id="timer-bar"></div>
         <div id="modal-overlay"></div>
-        <div id="next-button">next</div>
-        <div id="prev-button">prev</div>
-        <span  id="slideshow-state">&#9654;</span>
-        <div id="modal-title"><span id="title"></span><span id="title-toggle">-</span></div>
+        <span id="slideshow-state"><span class="glyphicon glyphicon-play"></span></span>
+        <div id="modal-title">
+            <span id="title"></span>
+        </div>
         <div id="modal-sub"></div>
-        <a id="modal-link" href="#"><img src="images/reddit.png" alt="See comments on reddit.com"></a>
-        <a id="imgur-link" href="#"><img src="images/imgur.png" alt="See comments on reddit.com"></a>
-        <div id="first-modal-image"></div>
-        <div id="second-modal-image"></div>
+        <div id="modal-links">
+            <a id="reddit-link" href="#">
+                <img src="images/reddit.png" alt="See comments on reddit.com">
+            </a>
+            <a id="google-link" href="#">
+                <img src="images/reddit.png" alt="See comments on reddit.com">
+            </a>
+        </div>
+        <div class="modal-image" id="first-modal-image"></div>
+        <div class="modal-image" id="second-modal-image"></div>
     </div>
+    <script id="image-fragment"></script>
 </body>
 </html>
