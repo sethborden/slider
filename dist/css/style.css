@@ -27,7 +27,7 @@ body {
 
 #messages {
     height: 5em;
-    margin-top: calc(8.3% * 2);
+    margin-top: calc(30%);
     vertical-align: center;
     z-index: 50;
     display: none;
@@ -252,7 +252,7 @@ body {
     width: 0;
     height: 3px;
     z-index: 9999;
-    background-color: red;
+    background-color: #428bca;
 }
 
 #modal-link {

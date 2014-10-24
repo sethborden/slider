@@ -1363,6 +1363,13 @@ $(document).ready(function() {
         $('#modal-window').hide();
     });
 
+    $('#options-pin').tooltip()
+    .click(function(e) {
+        $(this).toggleClass('glyphicon-pushpin');
+        $(this).toggleClass('glyphicon-record');
+        ss.pinOptions = !ss.pinOptions;
+    });
+    
     //TODO this shit needs to get fixed....
     //Oooooh that would work, have a title for each one of them instead of
     //detaching.
@@ -1394,9 +1401,11 @@ $(document).ready(function() {
     });
 
     $('.reddit-form').mouseleave(function(e) {
-        if (ss.images.length > 0) {
-            $('.reddit-form').slideUp('fast');
-            $('.header').fadeIn();
+        if (!ss.pinOptions) {
+            if (ss.images.length > 0) {
+                $('.reddit-form').slideUp('fast');
+                $('.header').fadeIn();
+            }
         }
     });
 
@@ -1404,18 +1413,25 @@ $(document).ready(function() {
         toggleSlideShow();
     });
 
-    $('.header').mouseenter(function(e) {
+    $('.header').click(function(e) {
         ss.headerTimeout = setTimeout(function(){
             $('.header').hide();
             $('.reddit-form').slideDown('fast');
-        }, 500);
+        }, 100);
     });
 
-    $('.header').mouseleave(function(e) {
-        if (ss.headerTimeout) {
-            clearTimeout(ss.headerTimeout);
-        }
-    });
+    //$('.header').mouseenter(function(e) {
+    //    ss.headerTimeout = setTimeout(function(){
+    //        $('.header').hide();
+    //        $('.reddit-form').slideDown('fast');
+    //    }, 500);
+    //});
+
+    //$('.header').mouseleave(function(e) {
+    //    if (ss.headerTimeout) {
+    //        clearTimeout(ss.headerTimeout);
+    //    }
+    //});
 
     $('#title-toggle').click(function(e) {
         var that = $(this);
@@ -1811,9 +1827,11 @@ function showLoader(el, position) {
 
 function hideForm() {
     $('#images').empty();
-    $('.reddit-form').slideUp('fast');
-    $('.header-info').text($('#subreddit').val());
-    $('.header').fadeIn();
+    if (!ss.pinOptions) {
+        $('.reddit-form').slideUp('fast');
+        $('.header-info').text($('#subreddit').val());
+        $('.header').fadeIn();
+    } 
 }
 
 $(document).on('foo', function() {
@@ -1832,26 +1850,20 @@ var SliderShower = function() {
     this.timeFrame = $('#reddit-form select[name="time-frame"]').val();
     this.linksToGrab = $('#history-depth').val();
     this.scaleUp = $('#fit-to-window').is(":checked");
-    this.scaleUp = $('#unroll-albums').is(":checked");
     this.slideDuration = $('#slide-duration').val();
     this.activeImgEl = $('#first-modal-image');
     this.nextImgEl = $('#second-modal-image');
     this.unrollAlbums = false;
     this.albumMode = false;
+    this.pinOptions = false;
 };
 
 SliderShower.prototype.getSubreddits = function() {
     return this.subreddits.join('+');
 };
 
+//TODO this needs to get fixed badly....
 SliderShower.prototype.genBaseUrl = function() {
-    //subreddit
-    //subreddit w/ timeframe
-    //subreddit w/ search terms
-    //subreddit w/ search terms & timeframe
-    //user
-    //user w/ timeframe
-
     if (this.user) {
         return "http://www.reddit.com/user/" +
                this.user + "\/submitted\/.json";
