@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="css/bootstrap-tagsinput.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="all.js"></script>
 </head>
@@ -33,17 +31,43 @@
     <div class="col-sm-1"></div>
     <div class="col-sm-10">
     <div class="panel panel-primary">
-    <div class="panel-heading">Picture Options</div>
+    <div class="panel-heading"><strong> Picture Options</strong>
+        <div class="pull-right">
+            <span id="options-pin" class="glyphicon glyphicon-pushpin" data-toggle="tooltip" data-placement="top" title="Pin options window"></span>
+            <span>&nbsp;</span>
+            <span id="help-clicker" class="glyphicon glyphicon-question-sign" data-toggle="modal" data-target="help-window"></span>
+        </div>
+    </div>
     <div class="panel-body">
+
     <form class="form-horizontal" role="form" id="reddit-form" >
+
         <div class="form-group">
-            <label for="subreddit" class="col-sm-2 control-label">Subreddits</label>
-            <div class="col-sm-6">
-                <input placeholder="...                                " id="subreddit" value="earthporn" type="text" data-role="tagsinput">
+            <div class="btn-group col-sm-offset-2 col-sm-2" data-toggle="buttons">
+                <div class="btn btn-primary active" for="subreddit-radio" id="subreddit-radio-button">
+                    <input type="radio" name="subreddit-radio" id="subreddit-radio" checked> Subreddits
+                </div>
+                <div class="btn btn-primary" for="user-radio" id="user-radio-button">
+                    <input type="radio" name="user-radio" id="user-radio" checked>Users
+                </div>
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group subreddit-search">
+            <label for="subreddit" class="col-sm-2 control-label">Subreddits</label>
+            <div class="col-sm-6">
+                <input placeholder="...             " id="subreddit" value="earthporn" type="text" data-role="tagsinput">
+            </div>
+        </div>
+
+        <div class="form-group user-search">
+            <label for="user" class="col-sm-2 control-label">Username</label>
+            <div class="col-sm-6">
+                <input id="user" value="" type="text" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group subreddit-search">
             <label for="search-term" class="col-sm-2 control-label">Search Term</label>
             <div class="col-sm-6">
                 <input id="search-term" value="" type="text" class="form-control">
@@ -111,20 +135,40 @@
     </form>
     </div>
 
-    <div id="images"></div>
-    <div id="messages"></div>
+    <div id="images" class="col-sm-offset-1 col-sm-10"></div>
+    <div class="vcenter alert alert-info col-sm-offset-4 col-sm-4" id="messages">
+    </div>
     <div id="modal-window">
         <div id="timer-bar"></div>
         <div id="modal-overlay"></div>
-        <div id="next-button">next</div>
-        <div id="prev-button">prev</div>
-        <span  id="slideshow-state">&#9654;</span>
-        <div id="modal-title"><span id="title"></span><span id="title-toggle">-</span></div>
+        <span id="slideshow-state"><span class="glyphicon glyphicon-play"></span></span>
+        <div id="modal-title">
+            <span id="title"></span>
+        </div>
         <div id="modal-sub"></div>
-        <a id="modal-link" href="#"><img src="images/reddit.png" alt="See comments on reddit.com"></a>
-        <a id="imgur-link" href="#"><img src="images/imgur.png" alt="See comments on reddit.com"></a>
-        <div id="first-modal-image"></div>
-        <div id="second-modal-image"></div>
+        <div id="modal-links">
+            <a id="reddit-link" href="#">
+                <img src="images/reddit.png" alt="See comments on reddit.com">
+            </a>
+            <a id="google-link" href="#">
+                <img src="images/reddit.png" alt="See comments on reddit.com">
+            </a>
+        </div>
+        <div class="modal-image" id="first-modal-image"></div>
+        <div class="modal-image" id="second-modal-image"></div>
+    </div>
+    <div class="modal fade help-window" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Modal title</h4>
+          </div>
+          <div class="modal-body">
+            <p>One fine body&hellip;</p>
+          </div>
+        </div>
+      </div>
     </div>
 </body>
 </html>

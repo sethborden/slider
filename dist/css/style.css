@@ -3,6 +3,14 @@ body {
     overflow-x: hidden;
 }
 
+.user-search {
+    display: none;
+}
+
+.subreddit-search {
+
+}
+
 .reddit-form {
     padding-top: 2em;
     border-bottom: 1px solid ccc;
@@ -12,20 +20,24 @@ body {
     max-width: 100%;
 }
 
-#messages {
-    position: fixed;
-    margin-right: auto;
-    margin-left: auto;
-    top: 300px;
-    left: 45%;
-    width: 10%;
-    height: 75px;
-    border: 2px solid black;
-    color: black;
+#subreddit_tagsinput {
+    margin-left: 131px;
+    margin-top: -28px;
+    margin-bottom: 2px;
     border-radius: 5px;
-    background: red;
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: center;
+    float: none;
+}
+
+#messages {
+    height: 5em;
+    margin-top: calc(30%);
+    vertical-align: center;
     z-index: 50;
-    text-align: center;
     display: none;
 }
 
@@ -38,6 +50,7 @@ body {
     background: #428bca;
     display: none;
     position: fixed;
+    z-index: 50;
     top: 0;
 }
 
@@ -45,18 +58,36 @@ body {
     padding: 5px;
 }
 
+/* THUMBNAIL DISPLAY STUFF */
+
 .image {
     -webkit-border-radius: 1em;
     target-new: tab;
     display: inline-block;
-    margin-right: 2em;
+    margin-right: 2.1em;
     margin-bottom: 2em;
-    width: 140px;
-    height: 140px;
+    width: 11em;
+    height: 11em;
     vertical-align: top;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+}
+
+/*need to fix this*/
+.overlay {
+    -webkit-border-radius: 1em;
+    height: 100%;
+    width: 100%;
+    background: #eee;
+    opacity: 0;
+    z-index: 10;
+    position: relative;
+    -webkit-transition: all 0.2s ease-in;
+    vertical-align: middle;
+    text-align: center;
+    cursor: default;
+    font-size: smaller;
 }
 
 #modal-window {
@@ -66,15 +97,9 @@ body {
     display: none;
     width: 100%;
     height: 100%;
-    z-index: 20;
+    z-index: 50;
 }
 
-#subreddit_tagsinput {
-    margin-left: 131px;
-    margin-top: -28px;
-    margin-bottom: 2px;
-    border-radius: 5px;
-}
 
 #modal-overlay {
     position: fixed;
@@ -147,21 +172,6 @@ body {
     display: block;
 }
 
-/*need to fix this*/
-.overlay {
-    -webkit-border-radius: 1em;
-    height: 140px;
-    width: 140px;
-    background: #eee;
-    opacity: 0;
-    z-index: 10;
-    position: relative;
-    -webkit-transition: all 0.2s ease-in;
-    vertical-align: middle;
-    text-align: center;
-    cursor: default;
-    font-size: smaller;
-}
 
 .image-description {
     text-align: left;
@@ -188,11 +198,13 @@ body {
 }
 
 #images {
-    margin-top: 3em;
+    /*
     margin-left: auto;
     margin-right: auto;
     padding-left: 2em;
     width: 90%;
+    */
+    margin-top: 3em;
 }
 
 #modal-sub {
@@ -213,39 +225,31 @@ body {
 }
 
 #slideshow-state {
+}
+
+#slideshow-state span{
     position: fixed;
     display: block;
     top: 3px;
     right: 3px;
-    font-size; 15px;
-    color: white;
     cursor: default;
-    border: 1px solid white;
-    padding: 3px;
-    border-radius: 100px;
-    height: 20px;
-    width: 20px;
-    text-align: center;
-    float: right;
+    z-index: 60;
 }
 
 #modal-title {
-    display: inline;
-    position: fixed;
-    padding: 10px;
-    top: 0;
-    left: 0;
-    font-size: 15px;
-    font-family: "Arial";
-    font-weight: bold;
+    display: none;
     background: rgba(50, 50, 50, 0.7);
     color: white;
-    border-right: 1px solid white;
-    border-bottom: 1px solid white;
-    border-bottom-right-radius: 20px;
     cursor: default;
-    max-width: 90%;
-    z-index: 30;
+    z-index: 60;
+    padding: .5em;
+    text-align: center;
+    width: 90%;
+    margin-left: 5%;
+    border-radius: 2em;
+    border: 2px solid white;
+    position: absolute;
+    bottom: 10px;
 }
 
 #timer-bar {
@@ -256,17 +260,7 @@ body {
     width: 0;
     height: 3px;
     z-index: 9999;
-    background-color: red;
-}
-
-#title-toggle {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-    margin-left: 10px;
-    border: 0 10px 0 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    background-color: #428bca;
 }
 
 #modal-link {

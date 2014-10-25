@@ -10,51 +10,60 @@ var SliderShower = function() {
     this.timeFrame = $('#reddit-form select[name="time-frame"]').val();
     this.linksToGrab = $('#history-depth').val();
     this.scaleUp = $('#fit-to-window').is(":checked");
-    this.scaleUp = $('#unroll-albums').is(":checked");
     this.slideDuration = $('#slide-duration').val();
     this.activeImgEl = $('#first-modal-image');
     this.nextImgEl = $('#second-modal-image');
     this.unrollAlbums = false;
     this.albumMode = false;
+    this.pinOptions = false;
 };
 
 SliderShower.prototype.getSubreddits = function() {
     return this.subreddits.join('+');
 };
 
-SliderShower.prototype.genBaseUrl = function() {
-    if (this.searchTerm !== '' && this.timeFrame !== 'none') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/search.json?q=" +
-               this.searchTerm.replace(' ', '+') +
-               "&restrict_sr=on&sort=relevance&t=" +
-               this.timeFrame;
-    } else if (this.timeFrame !== 'none') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/top/.json?sort=top&t=" +
-               this.timeFrame;
-    } else if (this.searchTerm !== '') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/search.json?q=" +
-               this.searchTerm.replace(' ', '+') +
-               "&restrict_sr=on&sort=relevance&t=all";
+//TODO this needs to get fixed badly....
+SliderShower.prototype.genBaseUrl = function(after) {
+    var url = "http://www.reddit.com/", query = {}, qString = '', key;
+    if (this.user) {
+        url += "user/" + this.user + "/submitted/.json";
+    } else if (this.searchTerm) {
+        url += "r/" + this.getSubreddits() + "/search/.json";
+    } else if (this.timeFrame) {
+        url += "r/" + this.getSubreddits() + "/top/.json";
     } else {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               ".json";
+        url += "r/" + this.getSubreddits() + ".json";
     }
+    if (this.timeFrame) {
+        query.t = this.timeFrame;
+        query.sort = 'top';
+    }
+    if (this.searchTerm !== '') {
+        query.restrict_sr = 'on';
+        query.q = this.searchTerm.replace(' ', '+');
+        if (!this.timeFrame || this.timeFrame !== 'none') {
+            query.sort = 'top';
+        } else {
+            query.sort = 'relevance';
+        }
+    }
+    if (typeof after !== 'undefined') {
+        query.count = 25;
+        query.after = after;
+    }
+    for (key in query) {
+        qString += "&" + key + "=" + query[key];
+    }
+    qString = qString.replace('&', '?');
+    console.log(url + qString);
+    return url + qString;
 };
 
 SliderShower.prototype.setNextPage = function(after) {
-    if (this.images.length === 0) {
+    if (typeof after === 'undefined') {
         this.nextPage = this.genBaseUrl();
-    } else if (this.timeFrame !== 'none') {
-        this.nextPage = this.genBaseUrl() + "&count=25&after=" + after;
     } else {
-        this.nextPage = this.genBaseUrl() + "?count=25&after=" + after;
+        this.nextPage = this.genBaseUrl(after);
     }
 };
 
@@ -123,12 +132,6 @@ SliderShower.prototype.filterImageLinks = function(links) {
         }
     });
     return out_links;
-};
-
-SliderShower.prototype.processRedditPage = function(images, base) {
-    for (var i = 0, l = images.length; i < l; i++) {
-    }
-    //this.setNextPage(data.data.after);
 };
 
 SliderShower.prototype.loadError = function() {
