@@ -730,7 +730,7 @@ var __module2__ = (function(__dependency1__) {
     // don't escape SafeStrings, since they're already safe
     if (string instanceof SafeString) {
       return string.toString();
-    } else if (string == null) {
+    } else if (string === null) {
       return "";
     } else if (!string) {
       return string + '';
@@ -875,7 +875,7 @@ var __module1__ = (function(__dependency1__, __dependency2__) {
 
       if(context === true) {
         return fn(this);
-      } else if(context === false || context == null) {
+      } else if(context === false || context === null) {
         return inverse(this);
       } else if (isArray(context)) {
         if(context.length > 0) {
@@ -993,7 +993,7 @@ var __module1__ = (function(__dependency1__, __dependency2__) {
     });
 
     instance.registerHelper('log', function(message, options) {
-      var level = options.data && options.data.level != null ? parseInt(options.data.level, 10) : 1;
+      var level = options.data && options.data.level !== null ? parseInt(options.data.level, 10) : 1;
       instance.log(level, message);
     });
 
@@ -1084,12 +1084,12 @@ var __module5__ = (function(__dependency1__, __dependency2__, __dependency3__) {
 
       var result = env.VM.invokePartial.call(this, partial, name, context, helpers, partials, data, depths);
 
-      if (result == null && env.compile) {
+      if (result === null && env.compile) {
         var options = { helpers: helpers, partials: partials, data: data, depths: depths };
         partials[name] = env.compile(partial, { data: data !== undefined, compat: templateSpec.compat }, env);
         result = partials[name](context, options);
       }
-      if (result != null) {
+      if (result !== null) {
         if (indent) {
           var lines = result.split('\n');
           for (var i = 0, l = lines.length; i < l; i++) {
@@ -1112,7 +1112,7 @@ var __module5__ = (function(__dependency1__, __dependency2__, __dependency3__) {
       lookup: function(depths, name) {
         var len = depths.length;
         for (var i = 0; i < len; i++) {
-          if (depths[i] && depths[i][name] != null) {
+          if (depths[i] && depths[i][name] !== null) {
             return depths[i][name];
           }
         }
@@ -1313,10 +1313,24 @@ $(document).ready(function() {
 
     $('#user').change(function(){
         ss.user = $(this).val();
+        ss.genBaseUrl();
     });
 
     $('#search-term').change(function(){
         ss.searchTerm = $(this).val();
+        ss.genBaseUrl();
+    });
+
+    $('#subreddit-radio-button').click(function() {
+        console.log('showing subreddit search');
+        $('.subreddit-search').show();
+        $('.user-search').hide();
+    });
+
+    $('#user-radio-button').click(function() {
+        console.log('showing user search');
+        $('.subreddit-search').hide();
+        $('.user-search').show();
     });
 
     /*************************
@@ -1369,7 +1383,7 @@ $(document).ready(function() {
         $(this).toggleClass('glyphicon-record');
         ss.pinOptions = !ss.pinOptions;
     });
-    
+
     //TODO this shit needs to get fixed....
     //Oooooh that would work, have a title for each one of them instead of
     //detaching.
@@ -1775,7 +1789,7 @@ function imageBoxFactory(link, index) {
     $inf.click(clickOverlay);
     $div.append($inf);
     return $div;
-};
+}
 
 function clickOverlay(e) {
     ss.activeImage = $(this).attr('i');
@@ -1831,7 +1845,7 @@ function hideForm() {
         $('.reddit-form').slideUp('fast');
         $('.header-info').text($('#subreddit').val());
         $('.header').fadeIn();
-    } 
+    }
 }
 
 $(document).on('foo', function() {
@@ -1863,42 +1877,47 @@ SliderShower.prototype.getSubreddits = function() {
 };
 
 //TODO this needs to get fixed badly....
-SliderShower.prototype.genBaseUrl = function() {
+SliderShower.prototype.genBaseUrl = function(after) {
+    var url = "http://www.reddit.com/", query = {}, qString = '', key;
     if (this.user) {
-        return "http://www.reddit.com/user/" +
-               this.user + "\/submitted\/.json";
-    } else if (this.searchTerm !== '' && this.timeFrame !== 'none') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/search.json?q=" +
-               this.searchTerm.replace(' ', '+') +
-               "&restrict_sr=on&sort=relevance&t=" +
-               this.timeFrame;
-    } else if (this.timeFrame !== 'none') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/top/.json?sort=top&t=" +
-               this.timeFrame;
-    } else if (this.searchTerm !== '') {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               "/search.json?q=" +
-               this.searchTerm.replace(' ', '+') +
-               "&restrict_sr=on&sort=relevance&t=all";
+        url += "user/" + this.user + "/submitted/.json";
+    } else if (this.searchTerm) {
+        url += "r/" + this.getSubreddits() + "/search/.json";
+    } else if (this.timeFrame) {
+        url += "r/" + this.getSubreddits() + "/top/.json";
     } else {
-        return "http://www.reddit.com/r/" +
-               this.getSubreddits() +
-               ".json";
+        url += "r/" + this.getSubreddits() + ".json";
     }
+    if (this.timeFrame) {
+        query.t = this.timeFrame;
+        query.sort = 'top';
+    }
+    if (this.searchTerm !== '') {
+        query.restrict_sr = 'on';
+        query.q = this.searchTerm.replace(' ', '+');
+        if (!this.timeFrame || this.timeFrame !== 'none') {
+            query.sort = 'top';
+        } else {
+            query.sort = 'relevance';
+        }
+    }
+    if (typeof after !== 'undefined') {
+        query.count = 25;
+        query.after = after;
+    }
+    for (key in query) {
+        qString += "&" + key + "=" + query[key];
+    }
+    qString = qString.replace('&', '?');
+    console.log(url + qString);
+    return url + qString;
 };
 
 SliderShower.prototype.setNextPage = function(after) {
-    if (this.images.length === 0) {
+    if (typeof after === 'undefined') {
         this.nextPage = this.genBaseUrl();
-    } else if (this.timeFrame !== 'none') {
-        this.nextPage = this.genBaseUrl() + "&count=25&after=" + after;
     } else {
-        this.nextPage = this.genBaseUrl() + "?count=25&after=" + after;
+        this.nextPage = this.genBaseUrl(after);
     }
 };
 
@@ -1967,12 +1986,6 @@ SliderShower.prototype.filterImageLinks = function(links) {
         }
     });
     return out_links;
-};
-
-SliderShower.prototype.processRedditPage = function(images, base) {
-    for (var i = 0, l = images.length; i < l; i++) {
-    }
-    //this.setNextPage(data.data.after);
 };
 
 SliderShower.prototype.loadError = function() {

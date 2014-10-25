@@ -3,6 +3,14 @@ body {
     overflow-x: hidden;
 }
 
+.user-search {
+    display: none;
+}
+
+.subreddit-search {
+
+}
+
 .reddit-form {
     padding-top: 2em;
     border-bottom: 1px solid ccc;

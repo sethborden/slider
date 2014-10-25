@@ -43,27 +43,31 @@
     <form class="form-horizontal" role="form" id="reddit-form" >
 
         <div class="form-group">
-            <div class="btn-group col-sm-2" data-toggle="buttons">
-                <label class="btn btn-primary active" for="subreddit-radio">
+            <div class="btn-group col-sm-offset-2 col-sm-2" data-toggle="buttons">
+                <div class="btn btn-primary active" for="subreddit-radio" id="subreddit-radio-button">
                     <input type="radio" name="subreddit-radio" id="subreddit-radio" checked> Subreddits
-                </label>
-                <label class="btn btn-primary" for="user-radio">
+                </div>
+                <div class="btn btn-primary" for="user-radio" id="user-radio-button">
                     <input type="radio" name="user-radio" id="user-radio" checked>Users
-                </label>
+                </div>
             </div>
+        </div>
+
+        <div class="form-group subreddit-search">
+            <label for="subreddit" class="col-sm-2 control-label">Subreddits</label>
             <div class="col-sm-6">
                 <input placeholder="...             " id="subreddit" value="earthporn" type="text" data-role="tagsinput">
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group user-search">
             <label for="user" class="col-sm-2 control-label">Username</label>
             <div class="col-sm-6">
                 <input id="user" value="" type="text" class="form-control">
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group subreddit-search">
             <label for="search-term" class="col-sm-2 control-label">Search Term</label>
             <div class="col-sm-6">
                 <input id="search-term" value="" type="text" class="form-control">
