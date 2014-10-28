@@ -1322,13 +1322,14 @@ $(document).ready(function() {
     });
 
     $('#subreddit-radio-button').click(function() {
-        console.log('showing subreddit search');
-        $('.subreddit-search').show();
+        $('#user').val('');
         $('.user-search').hide();
+        $('.subreddit-search').show();
     });
 
     $('#user-radio-button').click(function() {
-        console.log('showing user search');
+        $('#subreddit').tagsinput('removeAll');
+        $('#search-term').val('');
         $('.subreddit-search').hide();
         $('.user-search').show();
     });
@@ -1339,7 +1340,31 @@ $(document).ready(function() {
      *
      *************************/
 
+    $('#next').click(function() {
+        endSlideShow();
+        nextModalImage();
+    });
+
+    $('#prev').click(function() {
+        endSlideShow();
+        prevModalImage();
+    });
+
+    $('#modal-window').mousemove(function(e) {
+        clearTimeout(window.a);
+        $('.decoration').fadeIn();
+        window.a = setTimeout(function() {
+            $('.decoration').fadeOut();
+        }, 2000);
+    });
+
+    $('#next, #prev').mouseenter(function(e) {
+        clearTimeout(window.a);
+        $('.decoration').fadeIn();
+    });
+
     $(document).keydown(function(e) {
+
         if ($('#modal-window').css('display') !== 'none') {
             if (e.keyCode === 39) {
                 endSlideShow();
@@ -1366,10 +1391,8 @@ $(document).ready(function() {
                 toggleSlideShow();
             }
         } else {
-            console.log(e.keyCode);
         }
     });
-
 
     $('#modal-overlay').click(function() {
         endSlideShow();
@@ -1384,6 +1407,10 @@ $(document).ready(function() {
         ss.pinOptions = !ss.pinOptions;
     });
 
+    $('#help-clicker').click(function() {
+        $('.help-window').modal('show');
+    });
+
     //TODO this shit needs to get fixed....
     //Oooooh that would work, have a title for each one of them instead of
     //detaching.
@@ -1392,7 +1419,9 @@ $(document).ready(function() {
     });
 
     $('.modal-image').mouseleave(function() {
-        $('#modal-title').hide();
+        if (!ss.pinImageTitles) {
+            $('#modal-title').hide();
+        }
     });
 
     //TODO getRedditInfo should resolve as a promise so that other poop can be
@@ -1405,21 +1434,25 @@ $(document).ready(function() {
 
     $('#fetchButton').click(function(e) {
         e.preventDefault();
+        $('.header-container').hide();
         hideForm();
         ss.reset(); //this is mostly doing ss.images = [];
-        $('.page-title').slideUp('fast');
         toggleMessage('Loading images...');
         window.setTimeout(function() {
             ss.getRedditInfo();
         }, 300);
     });
 
-    $('.reddit-form').mouseleave(function(e) {
-        if (!ss.pinOptions) {
-            if (ss.images.length > 0) {
-                $('.reddit-form').slideUp('fast');
-                $('.header').fadeIn();
-            }
+    $('#image-title-pin').click(function() {
+        $(this).toggleClass('glyphicon-pushpin');
+        $(this).toggleClass('glyphicon-record');
+        ss.pinImageTitles = !ss.pinImageTitles;
+    });
+
+    $('#hide-clicker').click(function() {
+        if (ss.images.length > 0) {
+            $('.reddit-form').slideUp('fast');
+            $('.header').fadeIn();
         }
     });
 
@@ -1427,25 +1460,12 @@ $(document).ready(function() {
         toggleSlideShow();
     });
 
-    $('.header').click(function(e) {
+    $('#show-options').click(function(e) {
         ss.headerTimeout = setTimeout(function(){
             $('.header').hide();
             $('.reddit-form').slideDown('fast');
         }, 100);
     });
-
-    //$('.header').mouseenter(function(e) {
-    //    ss.headerTimeout = setTimeout(function(){
-    //        $('.header').hide();
-    //        $('.reddit-form').slideDown('fast');
-    //    }, 500);
-    //});
-
-    //$('.header').mouseleave(function(e) {
-    //    if (ss.headerTimeout) {
-    //        clearTimeout(ss.headerTimeout);
-    //    }
-    //});
 
     $('#title-toggle').click(function(e) {
         var that = $(this);
@@ -1457,6 +1477,12 @@ $(document).ready(function() {
             }
         });
     });
+
+    vcenter($('#messages'));
+    vcenter($('#prev'));
+    vcenter($('#next'));
+    vcenter($('#prev div'), true);
+    vcenter($('#next div'), true);
 
     //Sets up the tag input area using the tag plugin
     $('#subreddit').tagsinput({
@@ -1730,6 +1756,7 @@ function setupImage(modal, image, data) {
     $('#modal-sub').text(data.subreddit);
     $('#reddit-link').attr('href', "http://www.reddit.com" + data.permalink);
     $('#reddit-link').attr('target', '_blank');
+
     //This part sets up the image title
     var modal_title = $('#modal-title').detach();
     modal.append(modal_title);
@@ -1753,12 +1780,26 @@ function setupImageTitle(data) {
     }
 }
 
+function vcenter(el, parent) {
+    var elHeight, wHeight, newTop, p, pHeight;
+    elHeight = $(el).height();
+    if (parent) {
+        console.log(el.height());
+        p = $(el).parent();
+        pHeight = p.height();
+        newTop = p.css('top') + (pHeight / 2) - (elHeight / 2);
+    } else {
+        wHeight = $(window).height();
+        newTop = (wHeight / 2) - (elHeight / 2);
+    }
+    $(el).css('top', newTop);
+}
+
 
 //this would be so much easier with a fucking template system....
 //TODO use mustache or handlebars to simplify this bit
 function imageBoxFactory(link, index) {
     var data = link.data;
-    console.log(data.thumbnail);
     var descLen = 65;
     var r = data.subreddit.length > 10 ?
             data.subreddit.substr(0,10) + "..." :
@@ -1820,10 +1861,6 @@ function hideLoaders() {
 
 /**
  * Utility function to place a loading icon in the middle of an element.
- *
- * TODO: Allow to specify where on the el the loader is located
- * TODO: Allow for a custom loader
- * TODO: Allow for a custom loader class name
  * @param {Node} el The DOM element over which we'll display the loader.
  */
 function showLoader(el, position) {
@@ -1839,11 +1876,32 @@ function showLoader(el, position) {
     }
 }
 
+/*
+* Function to hide the initial search form and set up sub highlightin..
+* TODO this needs to be broken out...
+* This is really, really ugly.
+*/
+
 function hideForm() {
     $('#images').empty();
     if (!ss.pinOptions) {
         $('.reddit-form').slideUp('fast');
-        $('.header-info').text($('#subreddit').val());
+        $('#sub-list').empty();
+        ss.getSubreddits().split('+').forEach(function(x) {
+            var span = $('<span>', {class: 'sub-name', sub: x});
+            span.click(function(e) {
+                var sub = e.target.attributes.sub.value, i = 0;
+                ss.images.forEach(function(z) {
+                    if (z.data.subreddit.toLowerCase() === sub) {
+                        $('.overlay[i=' + i + ']')
+                        .parent()
+                        .toggleClass('highlight-overlays');
+                    }
+                    i++;
+                });
+            });
+            $('#sub-list').append(span.text(x));
+        });
         $('.header').fadeIn();
     }
 }
@@ -1870,13 +1928,13 @@ var SliderShower = function() {
     this.unrollAlbums = false;
     this.albumMode = false;
     this.pinOptions = false;
+    this.pinImageTitles = false;
 };
 
 SliderShower.prototype.getSubreddits = function() {
     return this.subreddits.join('+');
 };
 
-//TODO this needs to get fixed badly....
 SliderShower.prototype.genBaseUrl = function(after) {
     var url = "http://www.reddit.com/", query = {}, qString = '', key;
     if (this.user) {
@@ -1909,7 +1967,6 @@ SliderShower.prototype.genBaseUrl = function(after) {
         qString += "&" + key + "=" + query[key];
     }
     qString = qString.replace('&', '?');
-    console.log(url + qString);
     return url + qString;
 };
 

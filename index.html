@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Slider</title>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="dist/css/bootstrap-tagsinput.css" />
     <link rel="stylesheet" type="text/css" href="dist/css/style.css" />
@@ -13,7 +13,8 @@
 <body>
 
     <div class="header">
-        <div class="header-info"></div>
+        <span class="header-info" id="sub-list"></span>
+        <span class="glyphicon glyphicon-chevron-down pull-right" id="show-options"></span>
     </div>
 
     <div class="header-container">
@@ -36,6 +37,8 @@
             <span id="options-pin" class="glyphicon glyphicon-pushpin" data-toggle="tooltip" data-placement="top" title="Pin options window"></span>
             <span>&nbsp;</span>
             <span id="help-clicker" class="glyphicon glyphicon-question-sign" data-toggle="modal" data-target="help-window"></span>
+            <span>&nbsp;</span>
+            <span id="hide-clicker" class="glyphicon glyphicon-chevron-up" data-toggle="modal" data-target="help-window"></span>
         </div>
     </div>
     <div class="panel-body">
@@ -136,39 +139,54 @@
     </div>
 
     <div id="images" class="col-sm-offset-1 col-sm-10"></div>
-    <div class="vcenter alert alert-info col-sm-offset-4 col-sm-4" id="messages">
-    </div>
+    <div class="vcenter alert alert-info col-sm-offset-4 col-sm-4" id="messages"></div>
     <div id="modal-window">
+        <div id="prev" class="decoration"><div>&laquo;</div></div>
+        <div id="next" class="decoration"><div>&raquo;</div></div>
         <div id="timer-bar"></div>
         <div id="modal-overlay"></div>
-        <span id="slideshow-state"><span class="glyphicon glyphicon-play"></span></span>
+        <span id="slideshow-state" class="decoration"><span class="glyphicon glyphicon-play"></span></span>
         <div id="modal-title">
             <span id="title"></span>
+            <span class="glyphicon glyphicon-pushpin pull-right" id="image-title-pin"></span>
         </div>
-        <div id="modal-sub"></div>
-        <div id="modal-links">
+        <div id="modal-sub" class="decoration"></div>
+        <div id="modal-links" class="decoration">
             <a id="reddit-link" href="#">
-                <img src="images/reddit.png" alt="See comments on reddit.com">
-            </a>
-            <a id="google-link" href="#">
                 <img src="images/reddit.png" alt="See comments on reddit.com">
             </a>
         </div>
         <div class="modal-image" id="first-modal-image"></div>
         <div class="modal-image" id="second-modal-image"></div>
     </div>
+
     <div class="modal fade help-window" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-sm">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title">Modal title</h4>
+            <h4 class="modal-title">Slider Help</h4>
           </div>
           <div class="modal-body">
-            <p>One fine body&hellip;</p>
+              <p>
+              Enter multiple subreddits, or a username, then click fetch
+              to grab the images from reddit. Slideshow fetches the images
+              and begins the slideshow.
+              </p>
+              <p>Shortcuts</p>
+              <ul>
+                  <li>S/Space - Begin slideshow.</li>
+                  <li>Esc - Close image viewer.</li>
+                  <li>Right - Next slide.</li>
+                  <li>Left - Previous slide.</li>
+                  <li>Up - On an imgur album, enter the album to view pictures.</li>
+                  <li>Down - Exit album viewing mode and just look at cover
+                  pictures.</li>
+              </ul>
           </div>
         </div>
       </div>
     </div>
+
 </body>
 </html>
