@@ -16,13 +16,13 @@ var SliderShower = function() {
     this.unrollAlbums = false;
     this.albumMode = false;
     this.pinOptions = false;
+    this.pinImageTitles = false;
 };
 
 SliderShower.prototype.getSubreddits = function() {
     return this.subreddits.join('+');
 };
 
-//TODO this needs to get fixed badly....
 SliderShower.prototype.genBaseUrl = function(after) {
     var url = "http://www.reddit.com/", query = {}, qString = '', key;
     if (this.user) {
@@ -55,7 +55,6 @@ SliderShower.prototype.genBaseUrl = function(after) {
         qString += "&" + key + "=" + query[key];
     }
     qString = qString.replace('&', '?');
-    console.log(url + qString);
     return url + qString;
 };
 

@@ -7,8 +7,13 @@ body {
     display: none;
 }
 
-.subreddit-search {
+.highlight-overlays {
+    border: 5px solid #3ACF93;
+}
 
+.sub-name {
+    cursor: default;
+    margin: 1em;
 }
 
 .reddit-form {
@@ -18,6 +23,11 @@ body {
 
 . {
     max-width: 100%;
+}
+
+.header {
+    padding: 0.5em;
+    margin-bottom: 1em;
 }
 
 #subreddit_tagsinput {
@@ -34,9 +44,8 @@ body {
 }
 
 #messages {
+    position: absolute;
     height: 5em;
-    margin-top: calc(30%);
-    vertical-align: center;
     z-index: 50;
     display: none;
 }
@@ -127,51 +136,43 @@ body {
     display: none;
 }
 
-#modal-next {
+#prev, #next {
+    display: block;
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 15%;
-    height: 100%;
-    -webkit-transition: all 0.2s;
-    text-align: left;
+    width: 50px;
+    height: 100px;
+    border: 2px solid #428bca;
+    color: #428bca;
+    z-index: 1;
+    text-align: center;
+    background: #5351D2;
 }
 
-#modal-prev {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 15%;
-    height: 100%;
-    -webkit-transition: all 0.2s;
-    text-align: right;
-}
-
-
-#modal-next #next-content, #modal-prev #prev-content{
-    height: 20%;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 150px;
-    display: none;
-    -webkit-text-stroke: 2px black;
-    color: white;
+#prev div, #next div {
+    display: block;
+    font-size: 4em;
     cursor: default;
 }
 
-#next-content {
-    right: 0;
+#prev div {
+    left: 40%;
 }
 
-#prev-content {
+#next div {
+    right: 40%;
+}
+
+#prev {
     left: 0;
+    border-left: 0;
+    border-radius: 0 100px 100px 0;
 }
 
-#modal-next:hover #next-content, #modal-prev:hover #prev-content{
-    display: block;
+#next {
+    right: 0;
+    border-right: 0;
+    border-radius: 100px 0 0 100px;
 }
-
 
 .image-description {
     text-align: left;
@@ -204,7 +205,11 @@ body {
     padding-left: 2em;
     width: 90%;
     */
-    margin-top: 3em;
+    margin-top: 4em;
+}
+
+.sub-name:hover {
+    color: #94C3EA;
 }
 
 #modal-sub {
@@ -224,16 +229,22 @@ body {
     cursor: default;
 }
 
-#slideshow-state {
+#reddit-link {
+    display: inline;
+    position: fixed;
+    padding: 10px;
+    bottom: 0;
+    right: 0;
+    cursor: default;
 }
 
 #slideshow-state span{
     position: fixed;
-    display: block;
-    top: 3px;
-    right: 3px;
+    top: 1%;
+    right: 1%;
+    z-index: 1;
     cursor: default;
-    z-index: 60;
+    color: white;
 }
 
 #modal-title {

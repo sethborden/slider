@@ -255,6 +255,7 @@ function setupImage(modal, image, data) {
     $('#modal-sub').text(data.subreddit);
     $('#reddit-link').attr('href', "http://www.reddit.com" + data.permalink);
     $('#reddit-link').attr('target', '_blank');
+
     //This part sets up the image title
     var modal_title = $('#modal-title').detach();
     modal.append(modal_title);
@@ -276,5 +277,20 @@ function setupImageTitle(data) {
     } else {
         return data.title;
     }
+}
+
+function vcenter(el, parent) {
+    var elHeight, wHeight, newTop, p, pHeight;
+    elHeight = $(el).height();
+    if (parent) {
+        console.log(el.height());
+        p = $(el).parent();
+        pHeight = p.height();
+        newTop = p.css('top') + (pHeight / 2) - (elHeight / 2);
+    } else {
+        wHeight = $(window).height();
+        newTop = (wHeight / 2) - (elHeight / 2);
+    }
+    $(el).css('top', newTop);
 }
 

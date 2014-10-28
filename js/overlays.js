@@ -2,7 +2,6 @@
 //TODO use mustache or handlebars to simplify this bit
 function imageBoxFactory(link, index) {
     var data = link.data;
-    console.log(data.thumbnail);
     var descLen = 65;
     var r = data.subreddit.length > 10 ?
             data.subreddit.substr(0,10) + "..." :
@@ -64,10 +63,6 @@ function hideLoaders() {
 
 /**
  * Utility function to place a loading icon in the middle of an element.
- *
- * TODO: Allow to specify where on the el the loader is located
- * TODO: Allow for a custom loader
- * TODO: Allow for a custom loader class name
  * @param {Node} el The DOM element over which we'll display the loader.
  */
 function showLoader(el, position) {
@@ -83,11 +78,32 @@ function showLoader(el, position) {
     }
 }
 
+/*
+* Function to hide the initial search form and set up sub highlightin..
+* TODO this needs to be broken out...
+* This is really, really ugly.
+*/
+
 function hideForm() {
     $('#images').empty();
     if (!ss.pinOptions) {
         $('.reddit-form').slideUp('fast');
-        $('.header-info').text($('#subreddit').val());
+        $('#sub-list').empty();
+        ss.getSubreddits().split('+').forEach(function(x) {
+            var span = $('<span>', {class: 'sub-name', sub: x});
+            span.click(function(e) {
+                var sub = e.target.attributes.sub.value, i = 0;
+                ss.images.forEach(function(z) {
+                    if (z.data.subreddit.toLowerCase() === sub) {
+                        $('.overlay[i=' + i + ']')
+                        .parent()
+                        .toggleClass('highlight-overlays');
+                    }
+                    i++;
+                });
+            });
+            $('#sub-list').append(span.text(x));
+        });
         $('.header').fadeIn();
     }
 }

@@ -43,13 +43,14 @@ $(document).ready(function() {
     });
 
     $('#subreddit-radio-button').click(function() {
-        console.log('showing subreddit search');
-        $('.subreddit-search').show();
+        $('#user').val('');
         $('.user-search').hide();
+        $('.subreddit-search').show();
     });
 
     $('#user-radio-button').click(function() {
-        console.log('showing user search');
+        $('#subreddit').tagsinput('removeAll');
+        $('#search-term').val('');
         $('.subreddit-search').hide();
         $('.user-search').show();
     });
@@ -60,7 +61,31 @@ $(document).ready(function() {
      *
      *************************/
 
+    $('#next').click(function() {
+        endSlideShow();
+        nextModalImage();
+    });
+
+    $('#prev').click(function() {
+        endSlideShow();
+        prevModalImage();
+    });
+
+    $('#modal-window').mousemove(function(e) {
+        clearTimeout(window.a);
+        $('.decoration').fadeIn();
+        window.a = setTimeout(function() {
+            $('.decoration').fadeOut();
+        }, 2000);
+    });
+
+    $('#next, #prev').mouseenter(function(e) {
+        clearTimeout(window.a);
+        $('.decoration').fadeIn();
+    });
+
     $(document).keydown(function(e) {
+
         if ($('#modal-window').css('display') !== 'none') {
             if (e.keyCode === 39) {
                 endSlideShow();
@@ -87,10 +112,8 @@ $(document).ready(function() {
                 toggleSlideShow();
             }
         } else {
-            console.log(e.keyCode);
         }
     });
-
 
     $('#modal-overlay').click(function() {
         endSlideShow();
@@ -105,6 +128,10 @@ $(document).ready(function() {
         ss.pinOptions = !ss.pinOptions;
     });
 
+    $('#help-clicker').click(function() {
+        $('.help-window').modal('show');
+    });
+
     //TODO this shit needs to get fixed....
     //Oooooh that would work, have a title for each one of them instead of
     //detaching.
@@ -113,7 +140,9 @@ $(document).ready(function() {
     });
 
     $('.modal-image').mouseleave(function() {
-        $('#modal-title').hide();
+        if (!ss.pinImageTitles) {
+            $('#modal-title').hide();
+        }
     });
 
     //TODO getRedditInfo should resolve as a promise so that other poop can be
@@ -126,21 +155,25 @@ $(document).ready(function() {
 
     $('#fetchButton').click(function(e) {
         e.preventDefault();
+        $('.header-container').hide();
         hideForm();
         ss.reset(); //this is mostly doing ss.images = [];
-        $('.page-title').slideUp('fast');
         toggleMessage('Loading images...');
         window.setTimeout(function() {
             ss.getRedditInfo();
         }, 300);
     });
 
-    $('.reddit-form').mouseleave(function(e) {
-        if (!ss.pinOptions) {
-            if (ss.images.length > 0) {
-                $('.reddit-form').slideUp('fast');
-                $('.header').fadeIn();
-            }
+    $('#image-title-pin').click(function() {
+        $(this).toggleClass('glyphicon-pushpin');
+        $(this).toggleClass('glyphicon-record');
+        ss.pinImageTitles = !ss.pinImageTitles;
+    });
+
+    $('#hide-clicker').click(function() {
+        if (ss.images.length > 0) {
+            $('.reddit-form').slideUp('fast');
+            $('.header').fadeIn();
         }
     });
 
@@ -148,25 +181,12 @@ $(document).ready(function() {
         toggleSlideShow();
     });
 
-    $('.header').click(function(e) {
+    $('#show-options').click(function(e) {
         ss.headerTimeout = setTimeout(function(){
             $('.header').hide();
             $('.reddit-form').slideDown('fast');
         }, 100);
     });
-
-    //$('.header').mouseenter(function(e) {
-    //    ss.headerTimeout = setTimeout(function(){
-    //        $('.header').hide();
-    //        $('.reddit-form').slideDown('fast');
-    //    }, 500);
-    //});
-
-    //$('.header').mouseleave(function(e) {
-    //    if (ss.headerTimeout) {
-    //        clearTimeout(ss.headerTimeout);
-    //    }
-    //});
 
     $('#title-toggle').click(function(e) {
         var that = $(this);
@@ -178,6 +198,12 @@ $(document).ready(function() {
             }
         });
     });
+
+    vcenter($('#messages'));
+    vcenter($('#prev'));
+    vcenter($('#next'));
+    vcenter($('#prev div'), true);
+    vcenter($('#next div'), true);
 
     //Sets up the tag input area using the tag plugin
     $('#subreddit').tagsinput({
