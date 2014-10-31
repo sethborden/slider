@@ -1358,6 +1358,35 @@ $(document).ready(function() {
         }, 2000);
     });
 
+    //Control swiping here
+    //TODO add support to enter/exit albums with up/down swipes
+    var touchControls = {};
+
+    $('#modal-window').on('touchstart', function(e) {
+        e.preventDefault();
+        touchControls.xstart = e.originalEvent.touches[0].clientX;
+        touchControls.timestart = e.timeStamp;
+    });
+
+    $('#modal-window').on('touchmove', function(e) {
+        e.preventDefault();
+    });
+
+    $('#modal-window').on('touchend', function(e) {
+        e.preventDefault();
+        touchControls.xend = e.originalEvent.changedTouches[0].clientX;
+        touchControls.timeend = e.timeStamp;
+        deltaX = touchControls.xend - touchControls.xstart;
+        deltaT = touchControls.timeend - touchControls.timestart;
+        if (deltaX < -200 && deltaT < 1001) {
+            endSlideShow();
+            prevModalImage();
+        } else if (deltaX > 200 && deltaT < 1001) {
+            endSlideShow();
+            nextModalImage();
+        }
+    });
+
     $('#next, #prev').mouseenter(function(e) {
         clearTimeout(window.a);
         $('.decoration').fadeIn();
@@ -1366,27 +1395,27 @@ $(document).ready(function() {
     $(document).keydown(function(e) {
 
         if ($('#modal-window').css('display') !== 'none') {
-            if (e.keyCode === 39) {
+            if (e.keyCode === 39 || e.keyCode === 78) { //next slide
                 endSlideShow();
                 nextModalImage();
-            } else if (e.keyCode === 37) {
+            } else if (e.keyCode === 37 || e.keyCode === 80) { //prev slide
                 endSlideShow();
                 prevModalImage();
-            } else if (e.keyCode === 38 && !ss.albumMode) {
+            } else if (e.keyCode === 38 && !ss.albumMode) { //key up
                 enterAlbumMode();
-            } else if (e.keyCode === 40 && ss.albumMode) {
+            } else if (e.keyCode === 40 && ss.albumMode) { //key down
                 exitAlbumMode();
-            } else if (e.keyCode === 27) {
+            } else if (e.keyCode === 27) { //Esc
                 endSlideShow();
                 $('body').css('overflow', 'auto');
                 $('#modal-window').hide();
-            } else if (e.keyCode === 83) {
+            } else if (e.keyCode === 83) { //s
                 toggleSlideShow();
-            } else if (e.keyCode === 32 && !($('input').is(':focus'))) {
+            } else if (e.keyCode === 32 && !($('input').is(':focus'))) { //space
                 toggleSlideShow();
             }
         } else if (!$('input').is(":focus")){
-            if (e.keyCode === 83) {
+            if (e.keyCode === 83) { //s
                 $('.overlay:first').trigger('click');
                 toggleSlideShow();
             }
