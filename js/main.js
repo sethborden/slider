@@ -81,10 +81,12 @@ $(document).ready(function() {
 
     //Control swiping here
     //TODO add support to enter/exit albums with up/down swipes
-    var touchControls = {};
+    var touchControls = {
+        minDist: 100,
+        maxTime: 1000
+    };
 
     $('#modal-window').on('touchstart', function(e) {
-        e.preventDefault();
         touchControls.xstart = e.originalEvent.touches[0].clientX;
         touchControls.timestart = e.timeStamp;
     });
@@ -94,15 +96,14 @@ $(document).ready(function() {
     });
 
     $('#modal-window').on('touchend', function(e) {
-        e.preventDefault();
         touchControls.xend = e.originalEvent.changedTouches[0].clientX;
         touchControls.timeend = e.timeStamp;
         deltaX = touchControls.xend - touchControls.xstart;
         deltaT = touchControls.timeend - touchControls.timestart;
-        if (deltaX < -200 && deltaT < 1001) {
+        if (deltaX < (-1 * touchControls.minDist) && deltaT < touchControls.maxTime) {
             endSlideShow();
             prevModalImage();
-        } else if (deltaX > 200 && deltaT < 1001) {
+        } else if (deltaX > touchControls.minDist && deltaT < touchControls.maxTime) {
             endSlideShow();
             nextModalImage();
         }
