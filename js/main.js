@@ -187,6 +187,7 @@ $(document).ready(function() {
         e.preventDefault();
         $('.header-container').hide();
         hideForm();
+        ss.setCookie(); //save your search options
         ss.reset(); //this is mostly doing ss.images = [];
         toggleMessage();
         window.setTimeout(function() {
@@ -248,4 +249,7 @@ $(document).ready(function() {
     $('input').on('itemRemoved', function (){
         ss.subreddits = $('#subreddit').val().split(',');
     });
+
+    ss.getCookie();
+    ss.setOptions();
 });

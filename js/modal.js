@@ -283,7 +283,6 @@ function vcenter(el, parent) {
     var elHeight, wHeight, newTop, p, pHeight;
     elHeight = $(el).height();
     if (parent) {
-        console.log(el.height());
         p = $(el).parent();
         pHeight = p.height();
         newTop = p.css('top') + (pHeight / 2) - (elHeight / 2);

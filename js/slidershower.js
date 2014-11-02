@@ -19,6 +19,18 @@ var SliderShower = function() {
     this.pinImageTitles = false;
 };
 
+//TODO these should get the config elements passed into them
+SliderShower.prototype.setOptions = function() {
+    $('#subreddit').tagsinput('removeAll');
+    this.subreddits.forEach(function(z) {
+        $('#subreddit').tagsinput('add', z.trim());
+    });
+    $('#search-term').val(this.searchTerm);
+    $('#reddit-form select[name="time-frame"]').val(this.timeFrame);
+    $('#history-depth').val(this.linksToGrab);
+    $('#slide-duration').val(this.slideDuration);
+};
+
 SliderShower.prototype.getSubreddits = function() {
     return this.subreddits.join('+');
 };
@@ -66,11 +78,45 @@ SliderShower.prototype.setNextPage = function(after) {
     }
 };
 
+SliderShower.prototype.setCookie = function() {
+    var cookie = JSON.stringify({
+        sr: this.subreddits.join(','),
+        st: this.searchTerm,
+        un: this.user,
+        tf: this.timeFrame,
+        lg: this.linksToGrab,
+        sd: this.slideDuration,
+        si: this.scaleUp,
+        ua: this.unrollAlbums
+    });
+    var date = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toGMTString();
+    document.cookie = "options="+ cookie + ";expires=" + date;
+};
+
+SliderShower.prototype.getCookie = function() {
+    var that = this;
+    document.cookie.split(';').forEach(function(c) {
+        var optionsObject;
+        if (c.trim().indexOf('options') !== -1) {
+            c = JSON.parse(c.split('=')[1]);
+            that.subreddits = c.sr.split(',');
+            that.searchTerm = c.st;
+            that.user = c.un;
+            that.timeFrame = c.tf;
+            that.linksToGrab = c.lg;
+            that.slideDuration = c.sd;
+            that.scaleUp = c.si;
+            that.unrollAlbums = c.ua;
+            return true;
+        }
+        return false;
+    });
+};
+
 SliderShower.prototype.getRedditInfo = function() {
     var that = this;
     $.ajax({url: that.nextPage})
     .fail(function(e){
-        console.log(e);
         document.dispatchEvent(new Event('foo'));
     })
     .done(function(e) {
