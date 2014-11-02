@@ -1340,12 +1340,12 @@ $(document).ready(function() {
      *
      *************************/
 
-    $('#next').click(function() {
+    $('#next, .go-next').click(function() {
         endSlideShow();
         nextModalImage();
     });
 
-    $('#prev').click(function() {
+    $('#prev, .go-prev').click(function() {
         endSlideShow();
         prevModalImage();
     });
@@ -1486,7 +1486,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#slideshow-state').click(function(e) {
+    $('#slideshow-state, .go-play').click(function(e) {
         toggleSlideShow();
     });
 
@@ -1745,8 +1745,8 @@ function setupModal(transition) {
     }
     var i = ss.images[ss.activeImage].data;
     var mod = ss.activeImgEl;
-    showLoader(ss.activeImgEl);
-    showLoader(ss.nextImgEl);
+    showLoader(ss.activeImgEl, 'top-right');
+    showLoader(ss.nextImgEl, 'top-right');
     var img = new Image();
     $(img).load(function() {
         ss.imageState = 'loaded';
@@ -1882,6 +1882,16 @@ function toggleMessage(text) {
     }
 }
 
+function updateMessage(text) {
+    var msgBox = $('#messages');
+    msgBox.text(text);
+}
+
+$(document).on('addedImages', function(e) {
+    var t = "Loading images.... (" + ss.images.length + "/" + ss.linksToGrab + ")";
+    updateMessage(t);
+});
+
 /**
  * Utility function to hide all loading icons in the DOM.
  */
@@ -2010,18 +2020,20 @@ SliderShower.prototype.setNextPage = function(after) {
 
 SliderShower.prototype.getRedditInfo = function() {
     var that = this;
-    var currentJSON = $.ajax({url: that.nextPage, async: false});
-    currentJSON.fail(function(e){
+    $.ajax({url: that.nextPage})
+   .fail(function(e){
         document.dispatchEvent(new Event('foo'));
-    });
-    currentJSON.done(function(e) {
+    })
+    .done(function(e) {
         var images = that.filterImageLinks(e.data.children);
+        var ev = new Event('addedImages');
         images.forEach(function(i) {
             if (that.images.length < that.linksToGrab) {
                 that.images.push(i);
                 $('#images').append(imageBoxFactory(i, that.images.length - 1));
             }
         });
+        document.dispatchEvent(ev);
     })
     .then(function(e) {
         if (e.data.after !== null) {
@@ -2029,7 +2041,7 @@ SliderShower.prototype.getRedditInfo = function() {
             if (that.images.length < that.linksToGrab) {
                 that.getRedditInfo();
             } else {
-                document.dispatchEvent(new Event('foo'));
+                document.dispatchEvent(new Event('foo')); //hides the message window
             }
         } else {
             document.dispatchEvent(new Event('foo'));
