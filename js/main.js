@@ -188,7 +188,7 @@ $(document).ready(function() {
         $('.header-container').hide();
         hideForm();
         ss.reset(); //this is mostly doing ss.images = [];
-        toggleMessage('Loading images...');
+        toggleMessage();
         window.setTimeout(function() {
             ss.getRedditInfo();
         }, 300);
@@ -229,7 +229,7 @@ $(document).ready(function() {
         });
     });
 
-    vcenter($('#messages'));
+    vcenter($('#message-box'));
     vcenter($('#prev'));
     vcenter($('#next'));
     vcenter($('#prev div'), true);

@@ -45,9 +45,10 @@ function clickOverlay(e) {
  *
  */
 function toggleMessage(text) {
-    var msgBox = $('#messages');
+    var msgBox = $('#message-box');
+    var msg = $('#message-progress');
     if (msgBox.css('display') === 'none') {
-        msgBox.text(text);
+        msg.text(text);
         msgBox.fadeIn();
     } else {
         msgBox.fadeOut();
@@ -55,12 +56,15 @@ function toggleMessage(text) {
 }
 
 function updateMessage(text) {
-    var msgBox = $('#messages');
-    msgBox.text(text);
+    var msgBox = $('#message-progress');
+    var percent = (ss.images.length / ss.linksToGrab) * 100;
+    msgBox.text(text)
+          .attr('aria-valuenow', percent)
+          .width(percent + "%");
 }
 
 $(document).on('addedImages', function(e) {
-    var t = "Loading images.... (" + ss.images.length + "/" + ss.linksToGrab + ")";
+    var t = "(" + ss.images.length + "/" + ss.linksToGrab + ")";
     updateMessage(t);
 });
 
@@ -93,7 +97,6 @@ function showLoader(el, position) {
 * TODO this needs to be broken out...
 * This is really, really ugly.
 */
-
 function hideForm() {
     $('#images').empty();
     if (!ss.pinOptions) {

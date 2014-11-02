@@ -69,7 +69,8 @@ SliderShower.prototype.setNextPage = function(after) {
 SliderShower.prototype.getRedditInfo = function() {
     var that = this;
     $.ajax({url: that.nextPage})
-   .fail(function(e){
+    .fail(function(e){
+        console.log(e);
         document.dispatchEvent(new Event('foo'));
     })
     .done(function(e) {
@@ -92,6 +93,7 @@ SliderShower.prototype.getRedditInfo = function() {
                 document.dispatchEvent(new Event('foo')); //hides the message window
             }
         } else {
+            console.log('No after...sorry!');
             document.dispatchEvent(new Event('foo'));
         }
     });

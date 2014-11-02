@@ -1467,7 +1467,7 @@ $(document).ready(function() {
         $('.header-container').hide();
         hideForm();
         ss.reset(); //this is mostly doing ss.images = [];
-        toggleMessage('Loading images...');
+        toggleMessage();
         window.setTimeout(function() {
             ss.getRedditInfo();
         }, 300);
@@ -1508,7 +1508,7 @@ $(document).ready(function() {
         });
     });
 
-    vcenter($('#messages'));
+    vcenter($('#message-box'));
     vcenter($('#prev'));
     vcenter($('#next'));
     vcenter($('#prev div'), true);
@@ -1873,9 +1873,10 @@ function clickOverlay(e) {
  *
  */
 function toggleMessage(text) {
-    var msgBox = $('#messages');
+    var msgBox = $('#message-box');
+    var msg = $('#message-progress');
     if (msgBox.css('display') === 'none') {
-        msgBox.text(text);
+        msg.text(text);
         msgBox.fadeIn();
     } else {
         msgBox.fadeOut();
@@ -1883,12 +1884,15 @@ function toggleMessage(text) {
 }
 
 function updateMessage(text) {
-    var msgBox = $('#messages');
-    msgBox.text(text);
+    var msgBox = $('#message-progress');
+    var percent = (ss.images.length / ss.linksToGrab) * 100;
+    msgBox.text(text)
+          .attr('aria-valuenow', percent)
+          .width(percent + "%");
 }
 
 $(document).on('addedImages', function(e) {
-    var t = "Loading images.... (" + ss.images.length + "/" + ss.linksToGrab + ")";
+    var t = "(" + ss.images.length + "/" + ss.linksToGrab + ")";
     updateMessage(t);
 });
 
@@ -1921,7 +1925,6 @@ function showLoader(el, position) {
 * TODO this needs to be broken out...
 * This is really, really ugly.
 */
-
 function hideForm() {
     $('#images').empty();
     if (!ss.pinOptions) {
@@ -2021,7 +2024,8 @@ SliderShower.prototype.setNextPage = function(after) {
 SliderShower.prototype.getRedditInfo = function() {
     var that = this;
     $.ajax({url: that.nextPage})
-   .fail(function(e){
+    .fail(function(e){
+        console.log(e);
         document.dispatchEvent(new Event('foo'));
     })
     .done(function(e) {
@@ -2044,6 +2048,7 @@ SliderShower.prototype.getRedditInfo = function() {
                 document.dispatchEvent(new Event('foo')); //hides the message window
             }
         } else {
+            console.log('No after...sorry!');
             document.dispatchEvent(new Event('foo'));
         }
     });
