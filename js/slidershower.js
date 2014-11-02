@@ -68,18 +68,20 @@ SliderShower.prototype.setNextPage = function(after) {
 
 SliderShower.prototype.getRedditInfo = function() {
     var that = this;
-    var currentJSON = $.ajax({url: that.nextPage, async: false});
-    currentJSON.fail(function(e){
+    $.ajax({url: that.nextPage})
+   .fail(function(e){
         document.dispatchEvent(new Event('foo'));
-    });
-    currentJSON.done(function(e) {
+    })
+    .done(function(e) {
         var images = that.filterImageLinks(e.data.children);
+        var ev = new Event('addedImages');
         images.forEach(function(i) {
             if (that.images.length < that.linksToGrab) {
                 that.images.push(i);
                 $('#images').append(imageBoxFactory(i, that.images.length - 1));
             }
         });
+        document.dispatchEvent(ev);
     })
     .then(function(e) {
         if (e.data.after !== null) {
@@ -87,7 +89,7 @@ SliderShower.prototype.getRedditInfo = function() {
             if (that.images.length < that.linksToGrab) {
                 that.getRedditInfo();
             } else {
-                document.dispatchEvent(new Event('foo'));
+                document.dispatchEvent(new Event('foo')); //hides the message window
             }
         } else {
             document.dispatchEvent(new Event('foo'));

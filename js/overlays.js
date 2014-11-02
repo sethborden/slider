@@ -54,6 +54,16 @@ function toggleMessage(text) {
     }
 }
 
+function updateMessage(text) {
+    var msgBox = $('#messages');
+    msgBox.text(text);
+}
+
+$(document).on('addedImages', function(e) {
+    var t = "Loading images.... (" + ss.images.length + "/" + ss.linksToGrab + ")";
+    updateMessage(t);
+});
+
 /**
  * Utility function to hide all loading icons in the DOM.
  */
