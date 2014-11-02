@@ -61,12 +61,12 @@ $(document).ready(function() {
      *
      *************************/
 
-    $('#next').click(function() {
+    $('#next, .go-next').click(function() {
         endSlideShow();
         nextModalImage();
     });
 
-    $('#prev').click(function() {
+    $('#prev, .go-prev').click(function() {
         endSlideShow();
         prevModalImage();
     });
@@ -207,7 +207,7 @@ $(document).ready(function() {
         }
     });
 
-    $('#slideshow-state').click(function(e) {
+    $('#slideshow-state, .go-play').click(function(e) {
         toggleSlideShow();
     });
 

@@ -214,8 +214,8 @@ function setupModal(transition) {
     }
     var i = ss.images[ss.activeImage].data;
     var mod = ss.activeImgEl;
-    showLoader(ss.activeImgEl);
-    showLoader(ss.nextImgEl);
+    showLoader(ss.activeImgEl, 'top-right');
+    showLoader(ss.nextImgEl, 'top-right');
     var img = new Image();
     $(img).load(function() {
         ss.imageState = 'loaded';

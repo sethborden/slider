@@ -2,4 +2,5 @@
 /bower_components
 *.swp
 *.bat
-/python 
+/python
+tags
