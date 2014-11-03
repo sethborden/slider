@@ -1325,6 +1325,8 @@ $(document).ready(function() {
         $('#user').val('');
         $('.user-search').hide();
         $('.subreddit-search').show();
+        ss.setCookie();
+        ss.genBaseUrl();
     });
 
     $('#user-radio-button').click(function() {
@@ -1332,6 +1334,8 @@ $(document).ready(function() {
         $('#search-term').val('');
         $('.subreddit-search').hide();
         $('.user-search').show();
+        ss.setCookie();
+        ss.genBaseUrl();
     });
 
     /*************************
@@ -1498,22 +1502,20 @@ $(document).ready(function() {
         }, 100);
     });
 
-    $('#title-toggle').click(function(e) {
-        var that = $(this);
-        $('#title').toggle(300, function() {
-            if (that.text() === '-') {
-                that.text('+');
-            } else {
-                that.text('-');
-            }
-        });
-    });
-
+    //This seems inelegant..fuck it;
     vcenter($('#message-box'));
     vcenter($('#prev'));
     vcenter($('#next'));
     vcenter($('#prev div'), true);
     vcenter($('#next div'), true);
+
+    $(window).on('resize', function(e) {
+        vcenter($('#message-box'));
+        vcenter($('#prev'));
+        vcenter($('#next'));
+        vcenter($('#prev div'), true);
+        vcenter($('#next div'), true);
+    });
 
     //Sets up the tag input area using the tag plugin
     $('#subreddit').tagsinput({
@@ -1814,6 +1816,10 @@ function setupImageTitle(data) {
     }
 }
 
+/*
+ * Vertically centers an element
+ * TODO: grab everything that uses this as a class and center it...
+ */
 function vcenter(el, parent) {
     var elHeight, wHeight, newTop, p, pHeight;
     elHeight = $(el).height();
@@ -1883,15 +1889,19 @@ function toggleMessage(text) {
         msgBox.fadeIn();
     } else {
         msgBox.fadeOut();
+        console.log('reverting progress bars')
+        $('#progress-bar').attr('aria-valuenow', 0).width(0);
+        $('#message-progress').text('');
     }
 }
 
 function updateMessage(text) {
     var msgBox = $('#message-progress');
     var percent = (ss.images.length / ss.linksToGrab) * 100;
-    msgBox.text(text)
-          .attr('aria-valuenow', percent)
-          .width(percent + "%");
+    var msgProgress = $('#progress-bar');
+    msgBox.text(text);
+    msgProgress.attr('aria-valuenow', percent)
+               .width(percent + "%");
 }
 
 $(document).on('addedImages', function(e) {
@@ -1987,6 +1997,7 @@ SliderShower.prototype.setOptions = function() {
     $('#reddit-form select[name="time-frame"]').val(this.timeFrame);
     $('#history-depth').val(this.linksToGrab);
     $('#slide-duration').val(this.slideDuration);
+    this.genBaseUrl();
 };
 
 SliderShower.prototype.getSubreddits = function() {
@@ -2025,6 +2036,7 @@ SliderShower.prototype.genBaseUrl = function(after) {
         qString += "&" + key + "=" + query[key];
     }
     qString = qString.replace('&', '?');
+    console.log(url + qString);
     return url + qString;
 };
 

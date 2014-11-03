@@ -279,6 +279,10 @@ function setupImageTitle(data) {
     }
 }
 
+/*
+ * Vertically centers an element
+ * TODO: grab everything that uses this as a class and center it...
+ */
 function vcenter(el, parent) {
     var elHeight, wHeight, newTop, p, pHeight;
     elHeight = $(el).height();

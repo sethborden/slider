@@ -52,15 +52,19 @@ function toggleMessage(text) {
         msgBox.fadeIn();
     } else {
         msgBox.fadeOut();
+        console.log('reverting progress bars')
+        $('#progress-bar').attr('aria-valuenow', 0).width(0);
+        $('#message-progress').text('');
     }
 }
 
 function updateMessage(text) {
     var msgBox = $('#message-progress');
     var percent = (ss.images.length / ss.linksToGrab) * 100;
-    msgBox.text(text)
-          .attr('aria-valuenow', percent)
-          .width(percent + "%");
+    var msgProgress = $('#progress-bar');
+    msgBox.text(text);
+    msgProgress.attr('aria-valuenow', percent)
+               .width(percent + "%");
 }
 
 $(document).on('addedImages', function(e) {

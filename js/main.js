@@ -46,6 +46,8 @@ $(document).ready(function() {
         $('#user').val('');
         $('.user-search').hide();
         $('.subreddit-search').show();
+        ss.setCookie();
+        ss.genBaseUrl();
     });
 
     $('#user-radio-button').click(function() {
@@ -53,6 +55,8 @@ $(document).ready(function() {
         $('#search-term').val('');
         $('.subreddit-search').hide();
         $('.user-search').show();
+        ss.setCookie();
+        ss.genBaseUrl();
     });
 
     /*************************
@@ -219,22 +223,20 @@ $(document).ready(function() {
         }, 100);
     });
 
-    $('#title-toggle').click(function(e) {
-        var that = $(this);
-        $('#title').toggle(300, function() {
-            if (that.text() === '-') {
-                that.text('+');
-            } else {
-                that.text('-');
-            }
-        });
-    });
-
+    //This seems inelegant..fuck it;
     vcenter($('#message-box'));
     vcenter($('#prev'));
     vcenter($('#next'));
     vcenter($('#prev div'), true);
     vcenter($('#next div'), true);
+
+    $(window).on('resize', function(e) {
+        vcenter($('#message-box'));
+        vcenter($('#prev'));
+        vcenter($('#next'));
+        vcenter($('#prev div'), true);
+        vcenter($('#next div'), true);
+    });
 
     //Sets up the tag input area using the tag plugin
     $('#subreddit').tagsinput({

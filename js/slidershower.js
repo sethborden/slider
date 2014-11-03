@@ -29,6 +29,7 @@ SliderShower.prototype.setOptions = function() {
     $('#reddit-form select[name="time-frame"]').val(this.timeFrame);
     $('#history-depth').val(this.linksToGrab);
     $('#slide-duration').val(this.slideDuration);
+    this.genBaseUrl();
 };
 
 SliderShower.prototype.getSubreddits = function() {
@@ -67,6 +68,7 @@ SliderShower.prototype.genBaseUrl = function(after) {
         qString += "&" + key + "=" + query[key];
     }
     qString = qString.replace('&', '?');
+    console.log(url + qString);
     return url + qString;
 };
 
