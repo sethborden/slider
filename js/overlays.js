@@ -52,7 +52,6 @@ function toggleMessage(text) {
         msgBox.fadeIn();
     } else {
         msgBox.fadeOut();
-        console.log('reverting progress bars');
         $('#progress-bar').attr('aria-valuenow', 0).width(0);
         $('#message-progress').text('');
     }
@@ -100,25 +99,48 @@ function hideForm() {
     $('#images').empty();
     if (!ss.pinOptions) {
         $('.reddit-form').slideUp('fast');
-        $('#sub-list').empty();
-        ss.getSubreddits().split('+').forEach(function(x) {
-            var span = $('<span>', {class: 'sub-name', sub: x});
-            span.click(function(e) {
-                var sub = e.target.attributes.sub.value, i = 0;
-                ss.images.forEach(function(z) {
-                    if (z.data.subreddit.toLowerCase() === sub) {
-                        $('.overlay[i=' + i + ']')
-                        .parent()
-                        .toggleClass('highlight-overlays');
-                    }
-                    i++;
-                });
-            });
-            $('#sub-list').append(span.text(x));
-        });
+        createSubredditMenu();
         $('.header').fadeIn();
     }
 }
+
+/*
+ * Add a pill to the title bar for each subreddit you've selected
+ */
+function createSubredditMenu() {
+    var subreddits = ss.getSubreddits().split('+'), sub;
+    var fragment = $(document.createDocumentFragment());
+    $('#sub-list').empty();
+    subreddits.forEach(function(sub) {
+        fragment.append(genSubredditButton(sub));
+    });
+    $('#sub-list').append(fragment);
+}
+
+function genSubredditButton(sub) {
+    var span = $('<span>', {class: 'sub-name', sub: sub}).text(sub);
+    span.click(function() {
+        filterSubreddits(sub, highlightOverlay);
+    });
+    return span;
+}
+
+function filterSubreddits(sub, fn) {
+    var i = 0;
+    ss.images.forEach(function(z) {
+        if (z.data.subreddit.toLowerCase() === sub) {
+            fn(i);
+        }
+        i++;
+    });
+}
+
+function highlightOverlay(i) {
+    $('.overlay[i=' + i + ']')
+    .parent()
+    .toggleClass('highlight-overlays');
+}
+//So much spaghetti....
 
 $(document).on('foo', function() {
     toggleMessage();

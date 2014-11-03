@@ -247,14 +247,25 @@ $(document).ready(function() {
         tagClass: 'big'
     });
 
+    if (ss.getSubreddits() === '') {
+        $('#search-term').prop('disabled', true);
+    }
+
     $('input').on('itemAdded', function (){
         ss.subreddits = $('#subreddit').val().split(',');
+        if (ss.getSubreddits !== '') {
+            $('#search-term').prop('disabled', false);
+        }
     });
 
     $('input').on('itemRemoved', function (){
         ss.subreddits = $('#subreddit').val().split(',');
+        if (ss.getSubreddits() === '') {
+            $('#search-term').prop('disabled', true);
+        }
     });
 
+    //Tries to retrieve the options cookie and sets the options up.
     ss.getCookie();
     ss.setOptions();
 });

@@ -73,7 +73,6 @@ SliderShower.prototype.genBaseUrl = function(after) {
         qString += "&" + key + "=" + query[key];
     }
     qString = qString.replace('&', '?');
-    console.log(url + qString);
     return url + qString;
 };
 
@@ -169,7 +168,6 @@ SliderShower.prototype.filterImageLinks = function(links) {
             return !l.data.over_18;
         });
     }
-    console.log(links.length);
     links.forEach(function(link) {
         //This came from RES..credit where credit is due
         //TODO make this a lazy loader of sorts
