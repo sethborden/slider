@@ -1289,13 +1289,16 @@ $(document).ready(function() {
 
     //Create some one way bindings, we could use a framework for this, but fuck
     //that easy ass shit.
-    //TODO add these to the SliderShower init function.
     $('#fit-to-window').change(function(){
         ss.scaleUp = $(this).is(":checked");
     });
 
     $('#unroll-albums').change(function(){
         ss.unrollAlbums = $(this).is(":checked");
+    });
+
+    $('#get-nsfw').change(function(){
+        ss.getNsfw = $(this).is(":checked");
     });
 
     $('#time-frame').change(function(){
@@ -1323,6 +1326,7 @@ $(document).ready(function() {
 
     $('#subreddit-radio-button').click(function() {
         $('#user').val('');
+        ss.user = undefined;
         $('.user-search').hide();
         $('.subreddit-search').show();
         ss.setCookie();
@@ -1458,8 +1462,7 @@ $(document).ready(function() {
         }
     });
 
-    //TODO getRedditInfo should resolve as a promise so that other poop can be
-    //called here.
+    //TODO make this work...
     $('#slide-show-button').click(function(e) {
         e.preventDefault();
         hideForm();
@@ -1818,7 +1821,6 @@ function setupImageTitle(data) {
 
 /*
  * Vertically centers an element
- * TODO: grab everything that uses this as a class and center it...
  */
 function vcenter(el, parent) {
     var elHeight, wHeight, newTop, p, pHeight;
@@ -1889,7 +1891,7 @@ function toggleMessage(text) {
         msgBox.fadeIn();
     } else {
         msgBox.fadeOut();
-        console.log('reverting progress bars')
+        console.log('reverting progress bars');
         $('#progress-bar').attr('aria-valuenow', 0).width(0);
         $('#message-progress').text('');
     }
@@ -1913,7 +1915,10 @@ $(document).on('addedImages', function(e) {
  * Utility function to hide all loading icons in the DOM.
  */
 function hideLoaders() {
-    $('.loading').remove();
+    $('.csspinner').each(function(e) {
+        $(this).toggleClass('csspinner');
+        $(this).toggleClass('ringed');
+    });
 }
 
 /**
@@ -1921,16 +1926,8 @@ function hideLoaders() {
  * @param {Node} el The DOM element over which we'll display the loader.
  */
 function showLoader(el, position) {
-    var overlay = $('<img>', {class: 'loading', src: 'loading.gif'});
-    el.append(overlay);
-    overlay.css('position', 'absolute');
-    if (position === "center" || position === undefined) {
-        overlay.css('top', ((el.height() - 31) / 2));
-        overlay.css('left', ((el.width() - 31) / 2));
-    } else {
-        overlay.css('top', 0);
-        overlay.css('right', 0);
-    }
+    el.toggleClass('csspinner');
+    el.toggleClass('ringed');
 }
 
 /*
@@ -1978,25 +1975,30 @@ var SliderShower = function() {
     this.timeFrame = $('#reddit-form select[name="time-frame"]').val();
     this.linksToGrab = $('#history-depth').val();
     this.scaleUp = $('#fit-to-window').is(":checked");
+    this.getNsfw = $('#get-nsfw').is(":checked");
+    this.unrollAlbums = $('#unroll-albums').is(":checked");
     this.slideDuration = $('#slide-duration').val();
     this.activeImgEl = $('#first-modal-image');
     this.nextImgEl = $('#second-modal-image');
-    this.unrollAlbums = false;
     this.albumMode = false;
     this.pinOptions = false;
     this.pinImageTitles = false;
 };
 
 //TODO these should get the config elements passed into them
+//
 SliderShower.prototype.setOptions = function() {
     $('#subreddit').tagsinput('removeAll');
     this.subreddits.forEach(function(z) {
         $('#subreddit').tagsinput('add', z.trim());
     });
     $('#search-term').val(this.searchTerm);
-    $('#reddit-form select[name="time-frame"]').val(this.timeFrame);
+    $('#time-frame').val(this.timeFrame);
     $('#history-depth').val(this.linksToGrab);
     $('#slide-duration').val(this.slideDuration);
+    $('#fit-to-window').prop("checked", this.scaleUp);
+    $('#get-nsfw').prop("checked", this.getNsfw);
+    $('#unroll-albums').prop("checked", this.unrollAlbums);
     this.genBaseUrl();
 };
 
@@ -2057,7 +2059,8 @@ SliderShower.prototype.setCookie = function() {
         lg: this.linksToGrab,
         sd: this.slideDuration,
         si: this.scaleUp,
-        ua: this.unrollAlbums
+        ua: this.unrollAlbums,
+        gn: this.getNsfw
     });
     var date = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toGMTString();
     document.cookie = "options="+ cookie + ";expires=" + date;
@@ -2077,6 +2080,7 @@ SliderShower.prototype.getCookie = function() {
             that.slideDuration = c.sd;
             that.scaleUp = c.si;
             that.unrollAlbums = c.ua;
+            that.getNsfw = c.gn;
             return true;
         }
         return false;
@@ -2125,8 +2129,15 @@ SliderShower.prototype.getRedditInfo = function() {
  */
 SliderShower.prototype.filterImageLinks = function(links) {
     var out_links = [];
+    if (!ss.getNsfw) {
+        links = links.filter(function(l) {
+            return !l.data.over_18;
+        });
+    }
+    console.log(links.length);
     links.forEach(function(link) {
         //This came from RES..credit where credit is due
+        //TODO make this a lazy loader of sorts
         var ar = link.data.url.match(/^https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#?\w*)?$/i);
         if (ar) {
             var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";

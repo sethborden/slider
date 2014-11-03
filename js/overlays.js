@@ -52,7 +52,7 @@ function toggleMessage(text) {
         msgBox.fadeIn();
     } else {
         msgBox.fadeOut();
-        console.log('reverting progress bars')
+        console.log('reverting progress bars');
         $('#progress-bar').attr('aria-valuenow', 0).width(0);
         $('#message-progress').text('');
     }
@@ -76,7 +76,10 @@ $(document).on('addedImages', function(e) {
  * Utility function to hide all loading icons in the DOM.
  */
 function hideLoaders() {
-    $('.loading').remove();
+    $('.csspinner').each(function(e) {
+        $(this).toggleClass('csspinner');
+        $(this).toggleClass('ringed');
+    });
 }
 
 /**
@@ -84,16 +87,8 @@ function hideLoaders() {
  * @param {Node} el The DOM element over which we'll display the loader.
  */
 function showLoader(el, position) {
-    var overlay = $('<img>', {class: 'loading', src: 'loading.gif'});
-    el.append(overlay);
-    overlay.css('position', 'absolute');
-    if (position === "center" || position === undefined) {
-        overlay.css('top', ((el.height() - 31) / 2));
-        overlay.css('left', ((el.width() - 31) / 2));
-    } else {
-        overlay.css('top', 0);
-        overlay.css('right', 0);
-    }
+    el.toggleClass('csspinner');
+    el.toggleClass('ringed');
 }
 
 /*

@@ -10,13 +10,16 @@ $(document).ready(function() {
 
     //Create some one way bindings, we could use a framework for this, but fuck
     //that easy ass shit.
-    //TODO add these to the SliderShower init function.
     $('#fit-to-window').change(function(){
         ss.scaleUp = $(this).is(":checked");
     });
 
     $('#unroll-albums').change(function(){
         ss.unrollAlbums = $(this).is(":checked");
+    });
+
+    $('#get-nsfw').change(function(){
+        ss.getNsfw = $(this).is(":checked");
     });
 
     $('#time-frame').change(function(){
@@ -44,6 +47,7 @@ $(document).ready(function() {
 
     $('#subreddit-radio-button').click(function() {
         $('#user').val('');
+        ss.user = undefined;
         $('.user-search').hide();
         $('.subreddit-search').show();
         ss.setCookie();
@@ -179,8 +183,7 @@ $(document).ready(function() {
         }
     });
 
-    //TODO getRedditInfo should resolve as a promise so that other poop can be
-    //called here.
+    //TODO make this work...
     $('#slide-show-button').click(function(e) {
         e.preventDefault();
         hideForm();

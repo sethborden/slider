@@ -10,25 +10,30 @@ var SliderShower = function() {
     this.timeFrame = $('#reddit-form select[name="time-frame"]').val();
     this.linksToGrab = $('#history-depth').val();
     this.scaleUp = $('#fit-to-window').is(":checked");
+    this.getNsfw = $('#get-nsfw').is(":checked");
+    this.unrollAlbums = $('#unroll-albums').is(":checked");
     this.slideDuration = $('#slide-duration').val();
     this.activeImgEl = $('#first-modal-image');
     this.nextImgEl = $('#second-modal-image');
-    this.unrollAlbums = false;
     this.albumMode = false;
     this.pinOptions = false;
     this.pinImageTitles = false;
 };
 
 //TODO these should get the config elements passed into them
+//
 SliderShower.prototype.setOptions = function() {
     $('#subreddit').tagsinput('removeAll');
     this.subreddits.forEach(function(z) {
         $('#subreddit').tagsinput('add', z.trim());
     });
     $('#search-term').val(this.searchTerm);
-    $('#reddit-form select[name="time-frame"]').val(this.timeFrame);
+    $('#time-frame').val(this.timeFrame);
     $('#history-depth').val(this.linksToGrab);
     $('#slide-duration').val(this.slideDuration);
+    $('#fit-to-window').prop("checked", this.scaleUp);
+    $('#get-nsfw').prop("checked", this.getNsfw);
+    $('#unroll-albums').prop("checked", this.unrollAlbums);
     this.genBaseUrl();
 };
 
@@ -89,7 +94,8 @@ SliderShower.prototype.setCookie = function() {
         lg: this.linksToGrab,
         sd: this.slideDuration,
         si: this.scaleUp,
-        ua: this.unrollAlbums
+        ua: this.unrollAlbums,
+        gn: this.getNsfw
     });
     var date = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toGMTString();
     document.cookie = "options="+ cookie + ";expires=" + date;
@@ -109,6 +115,7 @@ SliderShower.prototype.getCookie = function() {
             that.slideDuration = c.sd;
             that.scaleUp = c.si;
             that.unrollAlbums = c.ua;
+            that.getNsfw = c.gn;
             return true;
         }
         return false;
@@ -157,8 +164,15 @@ SliderShower.prototype.getRedditInfo = function() {
  */
 SliderShower.prototype.filterImageLinks = function(links) {
     var out_links = [];
+    if (!ss.getNsfw) {
+        links = links.filter(function(l) {
+            return !l.data.over_18;
+        });
+    }
+    console.log(links.length);
     links.forEach(function(link) {
         //This came from RES..credit where credit is due
+        //TODO make this a lazy loader of sorts
         var ar = link.data.url.match(/^https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#?\w*)?$/i);
         if (ar) {
             var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
