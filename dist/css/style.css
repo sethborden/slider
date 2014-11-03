@@ -56,6 +56,20 @@ body {
     float: none;
 }
 
+.progress {
+    background: rgba(190, 190, 190, 0.9);
+}
+
+#message-progress {
+    position: absolute;
+    color: white;
+    width: 20%;
+    left: 40%;
+    z-index: 60;
+    border-radius: 5px;
+    text-align: center;
+}
+
 #message-box {
     position: absolute;
     height: 5em;
