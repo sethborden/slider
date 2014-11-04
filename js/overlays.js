@@ -13,6 +13,7 @@ function imageBoxFactory(link, index) {
     var t = data.title.replace(/"/g,"'").length > descLen ?
             data.title.substr(0, descLen) + "..." :
             data.title.replace(/"/g,"'");
+    var $container = $("<div>", {class: "col-md-2 col-xs-6"});
     var $div = $("<div>", {class: "image"});
     var $inf = $("<div>", {class: "overlay", i: index}); //TODO figure out where we're using this and destroy...
     var $des = $("<div>", {class: "image-description"});
@@ -31,8 +32,9 @@ function imageBoxFactory(link, index) {
     $inf.append($red);
     $inf.click(clickOverlay);
     $div.append($inf);
+    $container.append($div)
     ss.images[index].element = $div;
-    return $div;
+    return $container;
 }
 
 function clickOverlay(e) {
