@@ -1,11 +1,13 @@
 //TODO these should all be passed in as part of a config
 var SliderShower = function() {
+    this.colorList = ['#3ACF93', '#5351D2', '#FFD247', '#FF7E47', '#FFD247', '#FFB147'];
     this.images = [];
     this.activeImage = 0;
     this.albumImage = 0;
     this.slideShowActive = false;
     this.nextPage = '';
     this.subreddits = $('#subreddit').val().split(/\s/);
+    this.activeSubreddits = this.subreddits;
     this.searchTerm = $('#search-term').val();
     this.timeFrame = $('#reddit-form select[name="time-frame"]').val();
     this.linksToGrab = $('#history-depth').val();
@@ -18,6 +20,17 @@ var SliderShower = function() {
     this.albumMode = false;
     this.pinOptions = false;
     this.pinImageTitles = false;
+    this.keepLoading = true; //this is checked before each ajax call
+};
+
+/*
+ * Returns the first value in the colorlist, and pushes it to the end of the
+ * list
+ */
+SliderShower.prototype.getColor = function() {
+    var temp = this.colorList.shift();
+    this.colorList.push(temp);
+    return temp;
 };
 
 //TODO these should get the config elements passed into them
@@ -38,6 +51,7 @@ SliderShower.prototype.setOptions = function() {
 };
 
 SliderShower.prototype.getSubreddits = function() {
+    this.activeSubreddits = this.subreddits;
     return this.subreddits.join('+');
 };
 
@@ -125,30 +139,34 @@ SliderShower.prototype.getRedditInfo = function() {
     var that = this;
     $.ajax({url: that.nextPage})
     .fail(function(e){
-        document.dispatchEvent(new Event('foo'));
+        document.dispatchEvent(new Event('ajaxLoadingDone'));
     })
     .done(function(e) {
-        var images = that.filterImageLinks(e.data.children);
-        var ev = new Event('addedImages');
-        images.forEach(function(i) {
-            if (that.images.length < that.linksToGrab) {
-                that.images.push(i);
-                $('#images').append(imageBoxFactory(i, that.images.length - 1));
-            }
-        });
-        document.dispatchEvent(ev);
+        if (that.keepLoading) {
+            var images = that.filterImageLinks(e.data.children);
+            var ev = new Event('addedImages');
+            images.forEach(function(i) {
+                if (that.images.length < that.linksToGrab) {
+                    that.images.push(i);
+                    $('#images').append(imageBoxFactory(i, that.images.length - 1));
+                }
+            });
+            document.dispatchEvent(ev);
+        }
     })
     .then(function(e) {
-        if (e.data.after !== null) {
-            that.setNextPage(e.data.after);
-            if (that.images.length < that.linksToGrab) {
-                that.getRedditInfo();
+        if (that.keepLoading) {
+            if (e.data.after !== null) {
+                that.setNextPage(e.data.after);
+                if (that.images.length < that.linksToGrab) {
+                    that.getRedditInfo();
+                } else {
+                    document.dispatchEvent(new Event('ajaxLoadingDone')); //hides the message window
+                }
             } else {
-                document.dispatchEvent(new Event('foo')); //hides the message window
+                console.log('No after...sorry!');
+                document.dispatchEvent(new Event('ajaxLoadingDone'));
             }
-        } else {
-            console.log('No after...sorry!');
-            document.dispatchEvent(new Event('foo'));
         }
     });
 };

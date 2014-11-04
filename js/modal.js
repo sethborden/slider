@@ -126,18 +126,23 @@ function exitAlbumMode() {
  *
  */
 function nextModalImage() {
-    $('#imgur-link').hide();
-    if (ss.slideShowActive) $('#timer-bar').width('0');
     var i = ss.images[ss.activeImage].data;
-    if ((ss.unrollAlbums || ss.albumMode) && i.hasOwnProperty('album')) {
+    if (ss.slideShowActive) {
+        $('#timer-bar').width('0');
+    }
+    if ((ss.unrollAlbums || ss.albumMode) && i.hasOwnProperty('album')) { //if we have an album
         i.j = typeof i.j === 'undefined' ? 0 : i.j; //j is album index
         if (i.j + 1 === i.album.images.length) {
-            if (ss.albumMode) ss.albumMode = false;
+            if (ss.albumMode) {
+                ss.albumMode = false;
+            }
             incrementModalImage();
         } else {
             i.j = i.j + 1;
         }
+        //makes it seem like the album image is actually the image
         i.url = i.album.images[i.j].links.original;
+        //Seths the image title
         if (i.album.images[i.j].image.caption) {
             i.title = i.album.images[i.j].image.caption + " (" + (i.j + 1) + "/" + i.album.images.length + ")";
         } else {
@@ -153,10 +158,15 @@ function nextModalImage() {
  * Help function to increment the modalImage
  */
 function incrementModalImage() {
+    var subName;
     if (Number(ss.activeImage) < ss.images.length - 1) {
         ss.activeImage = Number(ss.activeImage) + 1;
     } else {
         ss.activeImage = 0;
+    }
+    subName = ss.images[Number(ss.activeImage)].data.subreddit.toLowerCase();
+    if (ss.activeSubreddits.indexOf(subName) < 0) {
+        incrementModalImage();
     }
 }
 
@@ -193,6 +203,10 @@ function decrementModalImage() {
         ss.activeImage = Number(ss.activeImage) - 1;
     } else {
         ss.activeImage = ss.images.length - 1;
+    }
+    subName = ss.images[Number(ss.activeImage)].data.subreddit.toLowerCase();
+    if (ss.activeSubreddits.indexOf(subName) < 0) {
+        decrementModalImage();
     }
 }
 

@@ -784,7 +784,8 @@ $(document).ready(function() {
         ss.pinOptions = !ss.pinOptions;
     });
 
-    $('#help-clicker').click(function() {
+    $('#help-clicker').tooltip()
+    .click(function() {
         $('.help-window').modal('show');
     });
 
@@ -815,8 +816,16 @@ $(document).ready(function() {
         ss.setCookie(); //save your search options
         ss.reset(); //this is mostly doing ss.images = [];
         toggleMessage();
+        ss.keepLoading = true;
         window.setTimeout(function() {
             ss.getRedditInfo();
+        }, 300);
+    });
+
+    $('#cancelLoadButton').click(function(e) {
+        ss.keepLoading = false;
+        window.setTimeout(function(e) {
+            toggleMessage();
         }, 300);
     });
 
@@ -826,7 +835,8 @@ $(document).ready(function() {
         ss.pinImageTitles = !ss.pinImageTitles;
     });
 
-    $('#hide-clicker').click(function() {
+    $('#hide-clicker').tooltip({container: 'body'})
+    .click(function() {
         if (ss.images.length > 0) {
             $('.reddit-form').slideUp('fast');
             $('.header').fadeIn();
@@ -839,6 +849,7 @@ $(document).ready(function() {
 
     $('#show-options').click(function(e) {
         ss.headerTimeout = setTimeout(function(){
+            window.scrollTo(0, 0);
             $('.header').hide();
             $('.reddit-form').slideDown('fast');
         }, 100);
@@ -1016,18 +1027,23 @@ function exitAlbumMode() {
  *
  */
 function nextModalImage() {
-    $('#imgur-link').hide();
-    if (ss.slideShowActive) $('#timer-bar').width('0');
     var i = ss.images[ss.activeImage].data;
-    if ((ss.unrollAlbums || ss.albumMode) && i.hasOwnProperty('album')) {
+    if (ss.slideShowActive) {
+        $('#timer-bar').width('0');
+    }
+    if ((ss.unrollAlbums || ss.albumMode) && i.hasOwnProperty('album')) { //if we have an album
         i.j = typeof i.j === 'undefined' ? 0 : i.j; //j is album index
         if (i.j + 1 === i.album.images.length) {
-            if (ss.albumMode) ss.albumMode = false;
+            if (ss.albumMode) {
+                ss.albumMode = false;
+            }
             incrementModalImage();
         } else {
             i.j = i.j + 1;
         }
+        //makes it seem like the album image is actually the image
         i.url = i.album.images[i.j].links.original;
+        //Seths the image title
         if (i.album.images[i.j].image.caption) {
             i.title = i.album.images[i.j].image.caption + " (" + (i.j + 1) + "/" + i.album.images.length + ")";
         } else {
@@ -1043,10 +1059,15 @@ function nextModalImage() {
  * Help function to increment the modalImage
  */
 function incrementModalImage() {
+    var subName;
     if (Number(ss.activeImage) < ss.images.length - 1) {
         ss.activeImage = Number(ss.activeImage) + 1;
     } else {
         ss.activeImage = 0;
+    }
+    subName = ss.images[Number(ss.activeImage)].data.subreddit.toLowerCase();
+    if (ss.activeSubreddits.indexOf(subName) < 0) {
+        incrementModalImage();
     }
 }
 
@@ -1083,6 +1104,10 @@ function decrementModalImage() {
         ss.activeImage = Number(ss.activeImage) - 1;
     } else {
         ss.activeImage = ss.images.length - 1;
+    }
+    subName = ss.images[Number(ss.activeImage)].data.subreddit.toLowerCase();
+    if (ss.activeSubreddits.indexOf(subName) < 0) {
+        decrementModalImage();
     }
 }
 
@@ -1203,7 +1228,7 @@ function imageBoxFactory(link, index) {
             data.title.substr(0, descLen) + "..." :
             data.title.replace(/"/g,"'");
     var $div = $("<div>", {class: "image"});
-    var $inf = $("<div>", {class: "overlay", i: index});
+    var $inf = $("<div>", {class: "overlay", i: index}); //TODO figure out where we're using this and destroy...
     var $des = $("<div>", {class: "image-description"});
     var $ttl = $("<div>", {class: "image-title"});
     var $red = $("<a>", {href: pl,
@@ -1220,6 +1245,7 @@ function imageBoxFactory(link, index) {
     $inf.append($red);
     $inf.click(clickOverlay);
     $div.append($inf);
+    ss.images[index].element = $div;
     return $div;
 }
 
@@ -1288,7 +1314,6 @@ function hideForm() {
     $('#images').empty();
     if (!ss.pinOptions) {
         $('.reddit-form').slideUp('fast');
-        createSubredditMenu();
         $('.header').fadeIn();
     }
 }
@@ -1299,50 +1324,77 @@ function hideForm() {
 function createSubredditMenu() {
     var subreddits = ss.getSubreddits().split('+'), sub;
     var fragment = $(document.createDocumentFragment());
+    var color;
     $('#sub-list').empty();
     subreddits.forEach(function(sub) {
-        fragment.append(genSubredditButton(sub));
+        color = ss.getColor();
+        setBorder(sub, color);
+        fragment.append(genSubredditButton(sub, color));
     });
     $('#sub-list').append(fragment);
 }
 
-function genSubredditButton(sub) {
-    var span = $('<span>', {class: 'sub-name', sub: sub}).text(sub);
-    span.click(function() {
-        filterSubreddits(sub, highlightOverlay);
-    });
-    return span;
-}
-
-function filterSubreddits(sub, fn) {
-    var i = 0;
-    ss.images.forEach(function(z) {
-        if (z.data.subreddit.toLowerCase() === sub) {
-            fn(i);
-        }
-        i++;
+function setBorder(sub, color) {
+    ss.images.filter(function(img) {
+        return (img.data.subreddit.toLowerCase() === sub);
+    })
+    .forEach(function(img) {
+        img.element.css('border', '3px solid ' + color);
     });
 }
 
-function highlightOverlay(i) {
-    $('.overlay[i=' + i + ']')
-    .parent()
-    .toggleClass('highlight-overlays');
+function genSubredditButton(sub, color) {
+    var count = ss.images.filter(function(img) {
+        return (img.data.subreddit.toLowerCase() === sub);
+    }).length;
+    return $('<span>', {class: 'sub-name', sub: sub})
+           .text(sub + "  (" + count +")")
+           .css('background', color)
+           .click(function() {
+               var that = this;
+               clickSubreddit(sub, that);
+           });
 }
+
+function clickSubreddit(sub, that) {
+    var i = ss.activeSubreddits.indexOf(sub);
+    if (i !== -1) {
+       ss.activeSubreddits.splice(i, 1);
+    } else {
+       ss.activeSubreddits.push(sub);
+    }
+    $(that).toggleClass('strike-through');
+    filterSubreddits(sub);
+}
+
+function filterSubreddits(sub) {
+    ss.images.filter(function(img) {
+        return (img.data.subreddit.toLowerCase() === sub);
+    })
+    .forEach(function(img) {
+        img.element.toggle('scale');
+    });
+}
+
 //So much spaghetti....
 
-$(document).on('foo', function() {
-    toggleMessage();
+$(document).on('ajaxLoadingDone', function() {
+    window.setTimeout(function() {
+        createSubredditMenu();
+        toggleMessage();
+    }, 700);
 });
 
 //TODO these should all be passed in as part of a config
 var SliderShower = function() {
+    this.colorList = ['#3ACF93', '#5351D2', '#FFD247', '#FF7E47', '#FFD247', '#FFB147'];
     this.images = [];
     this.activeImage = 0;
     this.albumImage = 0;
     this.slideShowActive = false;
     this.nextPage = '';
     this.subreddits = $('#subreddit').val().split(/\s/);
+    this.activeSubreddits = this.subreddits;
     this.searchTerm = $('#search-term').val();
     this.timeFrame = $('#reddit-form select[name="time-frame"]').val();
     this.linksToGrab = $('#history-depth').val();
@@ -1355,6 +1407,17 @@ var SliderShower = function() {
     this.albumMode = false;
     this.pinOptions = false;
     this.pinImageTitles = false;
+    this.keepLoading = true; //this is checked before each ajax call
+};
+
+/*
+ * Returns the first value in the colorlist, and pushes it to the end of the
+ * list
+ */
+SliderShower.prototype.getColor = function() {
+    var temp = this.colorList.shift();
+    this.colorList.push(temp);
+    return temp;
 };
 
 //TODO these should get the config elements passed into them
@@ -1375,6 +1438,7 @@ SliderShower.prototype.setOptions = function() {
 };
 
 SliderShower.prototype.getSubreddits = function() {
+    this.activeSubreddits = this.subreddits;
     return this.subreddits.join('+');
 };
 
@@ -1462,30 +1526,34 @@ SliderShower.prototype.getRedditInfo = function() {
     var that = this;
     $.ajax({url: that.nextPage})
     .fail(function(e){
-        document.dispatchEvent(new Event('foo'));
+        document.dispatchEvent(new Event('ajaxLoadingDone'));
     })
     .done(function(e) {
-        var images = that.filterImageLinks(e.data.children);
-        var ev = new Event('addedImages');
-        images.forEach(function(i) {
-            if (that.images.length < that.linksToGrab) {
-                that.images.push(i);
-                $('#images').append(imageBoxFactory(i, that.images.length - 1));
-            }
-        });
-        document.dispatchEvent(ev);
+        if (that.keepLoading) {
+            var images = that.filterImageLinks(e.data.children);
+            var ev = new Event('addedImages');
+            images.forEach(function(i) {
+                if (that.images.length < that.linksToGrab) {
+                    that.images.push(i);
+                    $('#images').append(imageBoxFactory(i, that.images.length - 1));
+                }
+            });
+            document.dispatchEvent(ev);
+        }
     })
     .then(function(e) {
-        if (e.data.after !== null) {
-            that.setNextPage(e.data.after);
-            if (that.images.length < that.linksToGrab) {
-                that.getRedditInfo();
+        if (that.keepLoading) {
+            if (e.data.after !== null) {
+                that.setNextPage(e.data.after);
+                if (that.images.length < that.linksToGrab) {
+                    that.getRedditInfo();
+                } else {
+                    document.dispatchEvent(new Event('ajaxLoadingDone')); //hides the message window
+                }
             } else {
-                document.dispatchEvent(new Event('foo')); //hides the message window
+                console.log('No after...sorry!');
+                document.dispatchEvent(new Event('ajaxLoadingDone'));
             }
-        } else {
-            console.log('No after...sorry!');
-            document.dispatchEvent(new Event('foo'));
         }
     });
 };

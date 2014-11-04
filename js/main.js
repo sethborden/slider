@@ -166,7 +166,8 @@ $(document).ready(function() {
         ss.pinOptions = !ss.pinOptions;
     });
 
-    $('#help-clicker').click(function() {
+    $('#help-clicker').tooltip()
+    .click(function() {
         $('.help-window').modal('show');
     });
 
@@ -197,8 +198,16 @@ $(document).ready(function() {
         ss.setCookie(); //save your search options
         ss.reset(); //this is mostly doing ss.images = [];
         toggleMessage();
+        ss.keepLoading = true;
         window.setTimeout(function() {
             ss.getRedditInfo();
+        }, 300);
+    });
+
+    $('#cancelLoadButton').click(function(e) {
+        ss.keepLoading = false;
+        window.setTimeout(function(e) {
+            toggleMessage();
         }, 300);
     });
 
@@ -208,7 +217,8 @@ $(document).ready(function() {
         ss.pinImageTitles = !ss.pinImageTitles;
     });
 
-    $('#hide-clicker').click(function() {
+    $('#hide-clicker').tooltip({container: 'body'})
+    .click(function() {
         if (ss.images.length > 0) {
             $('.reddit-form').slideUp('fast');
             $('.header').fadeIn();
@@ -221,6 +231,7 @@ $(document).ready(function() {
 
     $('#show-options').click(function(e) {
         ss.headerTimeout = setTimeout(function(){
+            window.scrollTo(0, 0);
             $('.header').hide();
             $('.reddit-form').slideDown('fast');
         }, 100);

@@ -14,7 +14,7 @@ function imageBoxFactory(link, index) {
             data.title.substr(0, descLen) + "..." :
             data.title.replace(/"/g,"'");
     var $div = $("<div>", {class: "image"});
-    var $inf = $("<div>", {class: "overlay", i: index});
+    var $inf = $("<div>", {class: "overlay", i: index}); //TODO figure out where we're using this and destroy...
     var $des = $("<div>", {class: "image-description"});
     var $ttl = $("<div>", {class: "image-title"});
     var $red = $("<a>", {href: pl,
@@ -31,6 +31,7 @@ function imageBoxFactory(link, index) {
     $inf.append($red);
     $inf.click(clickOverlay);
     $div.append($inf);
+    ss.images[index].element = $div;
     return $div;
 }
 
@@ -99,7 +100,6 @@ function hideForm() {
     $('#images').empty();
     if (!ss.pinOptions) {
         $('.reddit-form').slideUp('fast');
-        createSubredditMenu();
         $('.header').fadeIn();
     }
 }
@@ -110,38 +110,63 @@ function hideForm() {
 function createSubredditMenu() {
     var subreddits = ss.getSubreddits().split('+'), sub;
     var fragment = $(document.createDocumentFragment());
+    var color;
     $('#sub-list').empty();
     subreddits.forEach(function(sub) {
-        fragment.append(genSubredditButton(sub));
+        color = ss.getColor();
+        setBorder(sub, color);
+        fragment.append(genSubredditButton(sub, color));
     });
     $('#sub-list').append(fragment);
 }
 
-function genSubredditButton(sub) {
-    var span = $('<span>', {class: 'sub-name', sub: sub}).text(sub);
-    span.click(function() {
-        filterSubreddits(sub, highlightOverlay);
-    });
-    return span;
-}
-
-function filterSubreddits(sub, fn) {
-    var i = 0;
-    ss.images.forEach(function(z) {
-        if (z.data.subreddit.toLowerCase() === sub) {
-            fn(i);
-        }
-        i++;
+function setBorder(sub, color) {
+    ss.images.filter(function(img) {
+        return (img.data.subreddit.toLowerCase() === sub);
+    })
+    .forEach(function(img) {
+        img.element.css('border', '3px solid ' + color);
     });
 }
 
-function highlightOverlay(i) {
-    $('.overlay[i=' + i + ']')
-    .parent()
-    .toggleClass('highlight-overlays');
+function genSubredditButton(sub, color) {
+    var count = ss.images.filter(function(img) {
+        return (img.data.subreddit.toLowerCase() === sub);
+    }).length;
+    return $('<span>', {class: 'sub-name', sub: sub})
+           .text(sub + "  (" + count +")")
+           .css('background', color)
+           .click(function() {
+               var that = this;
+               clickSubreddit(sub, that);
+           });
 }
+
+function clickSubreddit(sub, that) {
+    var i = ss.activeSubreddits.indexOf(sub);
+    if (i !== -1) {
+       ss.activeSubreddits.splice(i, 1);
+    } else {
+       ss.activeSubreddits.push(sub);
+    }
+    $(that).toggleClass('strike-through');
+    filterSubreddits(sub);
+}
+
+function filterSubreddits(sub) {
+    ss.images.filter(function(img) {
+        return (img.data.subreddit.toLowerCase() === sub);
+    })
+    .forEach(function(img) {
+        img.element.toggle('scale');
+    });
+}
+
 //So much spaghetti....
 
-$(document).on('foo', function() {
-    toggleMessage();
+$(document).on('ajaxLoadingDone', function() {
+    window.setTimeout(function() {
+        createSubredditMenu();
+        toggleMessage();
+    }, 700);
 });
