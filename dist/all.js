@@ -1626,13 +1626,13 @@ var el = $(document);
 var vars = {};
 
 el.on('touchstart', function(e) {
-    console.log(e);
+    console.log(e.originalEvent.changedTouches);
 });
 
 el.on('touchmove', function(e) {
-    console.log(e);
+    console.log(e.originalEvent.changedTouches);
 });
 
 el.on('touchend', function(e) {
-    console.log(e);
+    console.log(e.originalEvent.changedTouches);
 });
