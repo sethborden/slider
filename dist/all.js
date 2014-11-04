@@ -1622,7 +1622,7 @@ SliderShower.prototype.init = function() {
     this.setNextPage();
 };
 
-var el = document;
+var el = $(document);
 var vars = {};
 
 el.on('touchstart', function(e) {
