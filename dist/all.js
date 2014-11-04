@@ -1246,7 +1246,7 @@ function imageBoxFactory(link, index) {
     $inf.append($red);
     $inf.click(clickOverlay);
     $div.append($inf);
-    $container.append($div)
+    $container.append($div);
     ss.images[index].element = $div;
     return $container;
 }
@@ -1621,3 +1621,18 @@ SliderShower.prototype.reset = function() {
 SliderShower.prototype.init = function() {
     this.setNextPage();
 };
+
+var el = document;
+var vars = {};
+
+el.on('touchstart', function(e) {
+    console.log(e);
+});
+
+el.on('touchmove', function(e) {
+    console.log(e);
+});
+
+el.on('touchend', function(e) {
+    console.log(e);
+});
