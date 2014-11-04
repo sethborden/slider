@@ -72,7 +72,7 @@ body {
 
 #message-box {
     position: absolute;
-    height: 5em;
+    height: 9em;
     z-index: 50;
     display: none;
 }
@@ -226,17 +226,23 @@ body {
 }
 
 #images {
-    /*
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 2em;
-    width: 90%;
-    */
     margin-top: 4em;
 }
 
+.sub-name {
+    margin-left: 8px;
+    padding: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+}
+
 .sub-name:hover {
-    color: #94C3EA;
+    color: #333;
+}
+
+.strike-through {
+    text-decoration: line-through;
 }
 
 #modal-sub {
@@ -263,6 +269,14 @@ body {
     bottom: 0;
     right: 0;
     cursor: default;
+}
+
+#show-options {
+    cursor: default;
+}
+
+#show-options-icon {
+    margin-top: 3px;
 }
 
 #slideshow-state span{

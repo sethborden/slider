@@ -14,7 +14,10 @@
 
     <div class="header">
         <span class="header-info" id="sub-list"></span>
-        <span class="glyphicon glyphicon-chevron-down pull-right" id="show-options"></span>
+        <span id="show-options">
+            <span class="glyphicon glyphicon-chevron-down pull-right" id="show-options-icon"></span>
+            <span class="pull-right">Show options&nbsp;</span>
+        </span>
     </div>
 
     <div class="header-container">
@@ -36,9 +39,9 @@
         <div class="pull-right">
             <span id="options-pin" class="glyphicon glyphicon-pushpin" data-toggle="tooltip" data-placement="top" title="Pin options window"></span>
             <span>&nbsp;</span>
-            <span id="help-clicker" class="glyphicon glyphicon-question-sign" data-toggle="modal" data-target="help-window"></span>
+            <span id="help-clicker" class="glyphicon glyphicon-question-sign" data-toggle="modal tooltip" data-placement="top" data-target="help-window" title="Show help"></span>
             <span>&nbsp;</span>
-            <span id="hide-clicker" class="glyphicon glyphicon-chevron-up" data-toggle="modal" data-target="help-window"></span>
+            <span id="hide-clicker" class="glyphicon glyphicon-chevron-up" data-toggle="tooltip" title="Hide window"></span>
         </div>
     </div>
     <div class="panel-body">
@@ -59,7 +62,7 @@
         <div class="form-group subreddit-search">
             <label for="subreddit" class="col-sm-2 control-label">Subreddits</label>
             <div class="col-sm-6">
-                <input placeholder="" id="subreddit" value="earthporn" type="text" data-role="tagsinput">
+                <input placeholder="          " id="subreddit" value="earthporn" type="text" data-role="tagsinput">
                 <span class="help-block">Enter subreddit names, separated by commas.</span>
             </div>
         </div>
@@ -146,6 +149,7 @@
             <span id="message-progress"></span>
             <div id="progress-bar" class="progress-bar active progress-bar-striped" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 0"></div>
         </div>
+        <button id="cancelLoadButton" class="btn btn-danger">Cancel</button>
     </div>
     <div id="modal-window">
         <div id="prev" class="decoration"><div>&laquo;</div></div>
