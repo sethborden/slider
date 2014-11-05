@@ -32,7 +32,7 @@ function imageBoxFactory(link, index) {
     $inf.append($red);
     $inf.click(clickOverlay);
     $div.append($inf);
-    $container.append($div)
+    $container.append($div);
     ss.images[index].element = $div;
     return $container;
 }
@@ -115,6 +115,7 @@ function createSubredditMenu() {
     var color;
     $('#sub-list').empty();
     subreddits.forEach(function(sub) {
+        sub = sub.toLowerCase();
         color = ss.getColor();
         setBorder(sub, color);
         fragment.append(genSubredditButton(sub, color));

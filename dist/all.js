@@ -1246,7 +1246,7 @@ function imageBoxFactory(link, index) {
     $inf.append($red);
     $inf.click(clickOverlay);
     $div.append($inf);
-    $container.append($div)
+    $container.append($div);
     ss.images[index].element = $div;
     return $container;
 }
@@ -1329,6 +1329,7 @@ function createSubredditMenu() {
     var color;
     $('#sub-list').empty();
     subreddits.forEach(function(sub) {
+        sub = sub.toLowerCase();
         color = ss.getColor();
         setBorder(sub, color);
         fragment.append(genSubredditButton(sub, color));
@@ -1621,3 +1622,35 @@ SliderShower.prototype.reset = function() {
 SliderShower.prototype.init = function() {
     this.setNextPage();
 };
+
+var el = $(document);
+var vars = {};
+
+el.on('touchstart', function(e) {
+    vars.start = e.originalEvent.changedTouches[0];
+});
+
+el.on('touchmove', function(e) {
+});
+
+el.on('touchend', function(e) {
+    vars.end = e.originalEvent.changedTouches[0];
+    getTouchVector();
+});
+
+function getTouchVector() {
+    var delX, delY, theta, quad;
+    delX = vars.end.screenX - vars.start.screenX;
+    delY = vars.end.screenY - vars.start.screenY;
+    if (delX > 0 && delY > 0) {
+        quad = 3;
+    } else if (delY > 0 && delX < 0) {
+        quad = 3;
+    } else if (delY < 0 && delX < 0) {
+        quad = 1;
+    } else if (delY > 0 && delX < 0) {
+        quad = 0;
+    }
+    theta = (Math.atan2(Math.abs(delY),Math.abs(delX)) + (quad * Math.PI / 2)) * 57.2957795;
+    console.log("\u03b8:", theta + "\u00b0 distance:", Math.sqrt(delX * delX + delY * delY) + "pixels");
+}
