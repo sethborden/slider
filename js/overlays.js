@@ -84,6 +84,18 @@ function hideLoaders() {
     });
 }
 
+function preloadImages() {
+    var set = function() {
+        ss.images[i].element[0].style.backgroundImage = "url(" + ss.images[i].data.url + ")";
+    };
+    var i, pimg, l = ss.images.length;
+    for (i = 0; i < l; i++) {
+        pimg = $('<img>')
+               .attr('src', ss.images[i].data.url)
+               .ready(set);
+    }
+}
+
 /**
  * Utility function to place a loading icon in the middle of an element.
  * @param {Node} el The DOM element over which we'll display the loader.
@@ -171,5 +183,8 @@ $(document).on('ajaxLoadingDone', function() {
     window.setTimeout(function() {
         createSubredditMenu();
         toggleMessage();
+        if (ss.preload) {
+            preloadImages();
+        }
     }, 700);
 });

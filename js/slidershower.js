@@ -14,6 +14,7 @@ var SliderShower = function() {
     this.scaleUp = $('#fit-to-window').is(":checked");
     this.getNsfw = $('#get-nsfw').is(":checked");
     this.unrollAlbums = $('#unroll-albums').is(":checked");
+    this.preload = $('#preload-images').is(":checked");
     this.slideDuration = $('#slide-duration').val();
     this.activeImgEl = $('#first-modal-image');
     this.nextImgEl = $('#second-modal-image');
@@ -47,6 +48,7 @@ SliderShower.prototype.setOptions = function() {
     $('#fit-to-window').prop("checked", this.scaleUp);
     $('#get-nsfw').prop("checked", this.getNsfw);
     $('#unroll-albums').prop("checked", this.unrollAlbums);
+    $('#preload-images').prop("checked", this.preload);
     this.genBaseUrl();
 };
 
@@ -108,7 +110,8 @@ SliderShower.prototype.setCookie = function() {
         sd: this.slideDuration,
         si: this.scaleUp,
         ua: this.unrollAlbums,
-        gn: this.getNsfw
+        gn: this.getNsfw,
+        pl: this.preload
     });
     var date = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toGMTString();
     document.cookie = "options="+ cookie + ";expires=" + date;
@@ -129,6 +132,7 @@ SliderShower.prototype.getCookie = function() {
             that.scaleUp = c.si;
             that.unrollAlbums = c.ua;
             that.getNsfw = c.gn;
+            that.preload = c.pl;
             return true;
         }
         return false;

@@ -18,6 +18,10 @@ $(document).ready(function() {
         ss.unrollAlbums = $(this).is(":checked");
     });
 
+    $('#preload-images').change(function(){
+        ss.preload = $(this).is(":checked");
+    });
+
     $('#get-nsfw').change(function(){
         ss.getNsfw = $(this).is(":checked");
     });
@@ -275,6 +279,7 @@ $(document).ready(function() {
             $('#search-term').prop('disabled', true);
         }
     });
+
 
     //Tries to retrieve the options cookie and sets the options up.
     ss.getCookie();

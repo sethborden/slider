@@ -232,12 +232,12 @@ function setupModal(transition) {
     showLoader(ss.nextImgEl, 'top-right');
     var img = new Image();
     $(img).load(function() {
+        ss.images[ss.activeImage].element[0].style.backgroundImage = "url(" + i.url + ")";
         ss.imageState = 'loaded';
         setupImage(mod, img, i);
         if (transition) {
             $(ss.activeImgEl).fadeToggle('slow');
-            $(ss.nextImgEl)
-            .fadeToggle({duration: 'slow', complete: function() {
+            $(ss.nextImgEl).fadeToggle({duration: 'slow', complete: function() {
                 $(document).trigger('imageLoaded');
             }});
         }
