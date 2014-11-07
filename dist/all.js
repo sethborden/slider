@@ -636,6 +636,10 @@ $(document).ready(function() {
         ss.unrollAlbums = $(this).is(":checked");
     });
 
+    $('#preload-images').change(function(){
+        ss.preload = $(this).is(":checked");
+    });
+
     $('#get-nsfw').change(function(){
         ss.getNsfw = $(this).is(":checked");
     });
@@ -894,6 +898,7 @@ $(document).ready(function() {
         }
     });
 
+
     //Tries to retrieve the options cookie and sets the options up.
     ss.getCookie();
     ss.setOptions();
@@ -1133,12 +1138,12 @@ function setupModal(transition) {
     showLoader(ss.nextImgEl, 'top-right');
     var img = new Image();
     $(img).load(function() {
+        ss.images[ss.activeImage].element[0].style.backgroundImage = "url(" + i.url + ")";
         ss.imageState = 'loaded';
         setupImage(mod, img, i);
         if (transition) {
             $(ss.activeImgEl).fadeToggle('slow');
-            $(ss.nextImgEl)
-            .fadeToggle({duration: 'slow', complete: function() {
+            $(ss.nextImgEl).fadeToggle({duration: 'slow', complete: function() {
                 $(document).trigger('imageLoaded');
             }});
         }
@@ -1298,6 +1303,18 @@ function hideLoaders() {
     });
 }
 
+function preloadImages() {
+    var set = function() {
+        ss.images[i].element[0].style.backgroundImage = "url(" + ss.images[i].data.url + ")";
+    };
+    var i, pimg, l = ss.images.length;
+    for (i = 0; i < l; i++) {
+        pimg = $('<img>')
+               .attr('src', ss.images[i].data.url)
+               .ready(set);
+    }
+}
+
 /**
  * Utility function to place a loading icon in the middle of an element.
  * @param {Node} el The DOM element over which we'll display the loader.
@@ -1385,6 +1402,9 @@ $(document).on('ajaxLoadingDone', function() {
     window.setTimeout(function() {
         createSubredditMenu();
         toggleMessage();
+        if (ss.preload) {
+            preloadImages();
+        }
     }, 700);
 });
 
@@ -1404,6 +1424,7 @@ var SliderShower = function() {
     this.scaleUp = $('#fit-to-window').is(":checked");
     this.getNsfw = $('#get-nsfw').is(":checked");
     this.unrollAlbums = $('#unroll-albums').is(":checked");
+    this.preload = $('#preload-images').is(":checked");
     this.slideDuration = $('#slide-duration').val();
     this.activeImgEl = $('#first-modal-image');
     this.nextImgEl = $('#second-modal-image');
@@ -1437,6 +1458,7 @@ SliderShower.prototype.setOptions = function() {
     $('#fit-to-window').prop("checked", this.scaleUp);
     $('#get-nsfw').prop("checked", this.getNsfw);
     $('#unroll-albums').prop("checked", this.unrollAlbums);
+    $('#preload-images').prop("checked", this.preload);
     this.genBaseUrl();
 };
 
@@ -1498,7 +1520,8 @@ SliderShower.prototype.setCookie = function() {
         sd: this.slideDuration,
         si: this.scaleUp,
         ua: this.unrollAlbums,
-        gn: this.getNsfw
+        gn: this.getNsfw,
+        pl: this.preload
     });
     var date = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toGMTString();
     document.cookie = "options="+ cookie + ";expires=" + date;
@@ -1519,6 +1542,7 @@ SliderShower.prototype.getCookie = function() {
             that.scaleUp = c.si;
             that.unrollAlbums = c.ua;
             that.getNsfw = c.gn;
+            that.preload = c.pl;
             return true;
         }
         return false;
