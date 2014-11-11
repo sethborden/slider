@@ -816,6 +816,7 @@ $(document).ready(function() {
     $('#fetchButton').click(function(e) {
         e.preventDefault();
         $('.header-container').hide();
+        $('#sub-list').empty();
         hideForm();
         ss.setCookie(); //save your search options
         ss.reset(); //this is mostly doing ss.images = [];
@@ -1444,8 +1445,6 @@ SliderShower.prototype.getColor = function() {
     return temp;
 };
 
-//TODO these should get the config elements passed into them
-//
 SliderShower.prototype.setOptions = function() {
     $('#subreddit').tagsinput('removeAll');
     this.subreddits.forEach(function(z) {
@@ -1587,7 +1586,6 @@ SliderShower.prototype.getRedditInfo = function() {
 
 /**
  * TODO: Allow allow for a custom set of extensions
- * TODO: Create a similar funciton that will filter out imgur albums, etc.
  * TODO: Clean this shit up
  *
  * @param {string} url The url that we're checking for imageyness.
@@ -1595,38 +1593,46 @@ SliderShower.prototype.getRedditInfo = function() {
  */
 SliderShower.prototype.filterImageLinks = function(links) {
     var out_links = [];
+    var that = this;
     if (!ss.getNsfw) {
         links = links.filter(function(l) {
             return !l.data.over_18;
         });
     }
     links.forEach(function(link) {
-        //This came from RES..credit where credit is due
-        //TODO make this a lazy loader of sorts
-        var ar = link.data.url.match(/^https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#?\w*)?$/i);
+        var a, apiUrl, ar = link.data.url.match(/^https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#?\w*)?$/i);
         if (ar) {
-            var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
+            link.apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
             link.album_url = link.data.url;
-            $.ajax({url: apiUrl, async: false})
-            .success(function(data) {
-                try {
-                    link.data.url = data.album.images[0].links.original;
-                    link.data.thumbnail = data.album.images[0].links.small_square;
-                    link.data.album = data.album;
-                    link.data.album.title = link.data.title;
-                    out_links.push(link);
-                } catch (e) {
-                    //do nothing...probably a 404...
-                }
-            })
-            .fail(function(data) {
-                console.log(data);
-            });
+            link.index = that.images.length - 1;
+            out_links.push(link);
+            that.loadImgurAlbum(link.apiUrl, link.index, link);
         } else if (link.data.url.match(/.*\.(?:png|jpg|jpeg|gif)/)) {
             out_links.push(link);
         }
     });
     return out_links;
+};
+
+//this is kind of working now, could be better, but schmeg it...
+SliderShower.prototype.loadImgurAlbum = function(apiUrl, index, link) {
+    var that = this;
+    $.ajax({url: apiUrl})
+    .success(function(data) {
+        try {
+            var el;
+            link.data.url = data.album.images[0].links.original;
+            link.data.thumbnail = data.album.images[0].links.small_square;
+            link.data.album = data.album;
+            link.data.album.title = link.data.title;
+            that.images[index] = link;
+            var el = that.images[index].element;
+            el.css('background-image', 'url(\"' + link.data.thumbnail + '\")');
+        } catch(e) {
+        }
+    })
+    .fail(function(data) {
+    });
 };
 
 SliderShower.prototype.loadError = function() {
@@ -1646,35 +1652,3 @@ SliderShower.prototype.reset = function() {
 SliderShower.prototype.init = function() {
     this.setNextPage();
 };
-
-var el = $(document);
-var vars = {};
-
-el.on('touchstart', function(e) {
-    vars.start = e.originalEvent.changedTouches[0];
-});
-
-el.on('touchmove', function(e) {
-});
-
-el.on('touchend', function(e) {
-    vars.end = e.originalEvent.changedTouches[0];
-    getTouchVector();
-});
-
-function getTouchVector() {
-    var delX, delY, theta, quad;
-    delX = vars.end.screenX - vars.start.screenX;
-    delY = vars.end.screenY - vars.start.screenY;
-    if (delX > 0 && delY > 0) {
-        quad = 3;
-    } else if (delY > 0 && delX < 0) {
-        quad = 3;
-    } else if (delY < 0 && delX < 0) {
-        quad = 1;
-    } else if (delY > 0 && delX < 0) {
-        quad = 0;
-    }
-    theta = (Math.atan2(Math.abs(delY),Math.abs(delX)) + (quad * Math.PI / 2)) * 57.2957795;
-    console.log("\u03b8:", theta + "\u00b0 distance:", Math.sqrt(delX * delX + delY * delY) + "pixels");
-}
