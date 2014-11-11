@@ -34,8 +34,6 @@ SliderShower.prototype.getColor = function() {
     return temp;
 };
 
-//TODO these should get the config elements passed into them
-//
 SliderShower.prototype.setOptions = function() {
     $('#subreddit').tagsinput('removeAll');
     this.subreddits.forEach(function(z) {
@@ -185,6 +183,7 @@ SliderShower.prototype.getRedditInfo = function() {
  */
 SliderShower.prototype.filterImageLinks = function(links) {
     var out_links = [];
+    var that = this;
     if (!ss.getNsfw) {
         links = links.filter(function(l) {
             return !l.data.over_18;
@@ -192,31 +191,36 @@ SliderShower.prototype.filterImageLinks = function(links) {
     }
     links.forEach(function(link) {
         //This came from RES..credit where credit is due
-        //TODO make this a lazy loader of sorts
         var ar = link.data.url.match(/^https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#?\w*)?$/i);
         if (ar) {
             var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
             link.album_url = link.data.url;
-            $.ajax({url: apiUrl, async: false})
-            .success(function(data) {
-                try {
-                    link.data.url = data.album.images[0].links.original;
-                    link.data.thumbnail = data.album.images[0].links.small_square;
-                    link.data.album = data.album;
-                    link.data.album.title = link.data.title;
-                    out_links.push(link);
-                } catch (e) {
-                    //do nothing...probably a 404...
-                }
-            })
-            .fail(function(data) {
-                console.log(data);
-            });
+            that.loadImgurAlbum(apiUrl, that.images.length - 1, link);
+            out_links.push(link);
         } else if (link.data.url.match(/.*\.(?:png|jpg|jpeg|gif)/)) {
             out_links.push(link);
         }
     });
     return out_links;
+};
+
+SliderShower.prototype.loadImgurAlbum = function(apiUrl, index, link) {
+    link.album_url = link.data.url;
+    $.ajax({url: apiUrl, async: false})
+    .success(function(data) {
+        try {
+            link.data.url = data.album.images[0].links.original;
+            link.data.thumbnail = data.album.images[0].links.small_square;
+            link.data.album = data.album;
+            link.data.album.title = link.data.title;
+            this.images[index] = link;
+        } catch (e) {
+            //do nothing...probably a 404...
+        }
+    })
+    .fail(function(data) {
+        console.log(data);
+    });
 };
 
 SliderShower.prototype.loadError = function() {
