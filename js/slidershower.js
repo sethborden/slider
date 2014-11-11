@@ -175,7 +175,6 @@ SliderShower.prototype.getRedditInfo = function() {
 
 /**
  * TODO: Allow allow for a custom set of extensions
- * TODO: Create a similar funciton that will filter out imgur albums, etc.
  * TODO: Clean this shit up
  *
  * @param {string} url The url that we're checking for imageyness.
@@ -190,13 +189,13 @@ SliderShower.prototype.filterImageLinks = function(links) {
         });
     }
     links.forEach(function(link) {
-        //This came from RES..credit where credit is due
-        var ar = link.data.url.match(/^https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#?\w*)?$/i);
+        var a, apiUrl, ar = link.data.url.match(/^https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#?\w*)?$/i);
         if (ar) {
-            var apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
+            link.apiUrl = "http://api.imgur.com/2/album/" + encodeURIComponent(ar[1]) + ".json";
             link.album_url = link.data.url;
-            that.loadImgurAlbum(apiUrl, that.images.length - 1, link);
+            link.index = that.images.length - 1;
             out_links.push(link);
+            that.loadImgurAlbum(link.apiUrl, link.index, link);
         } else if (link.data.url.match(/.*\.(?:png|jpg|jpeg|gif)/)) {
             out_links.push(link);
         }
@@ -204,22 +203,24 @@ SliderShower.prototype.filterImageLinks = function(links) {
     return out_links;
 };
 
+//this is kind of working now, could be better, but schmeg it...
 SliderShower.prototype.loadImgurAlbum = function(apiUrl, index, link) {
-    link.album_url = link.data.url;
-    $.ajax({url: apiUrl, async: false})
+    var that = this;
+    $.ajax({url: apiUrl})
     .success(function(data) {
         try {
+            var el;
             link.data.url = data.album.images[0].links.original;
             link.data.thumbnail = data.album.images[0].links.small_square;
             link.data.album = data.album;
             link.data.album.title = link.data.title;
-            this.images[index] = link;
-        } catch (e) {
-            //do nothing...probably a 404...
+            that.images[index] = link;
+            var el = that.images[index].element;
+            el.css('background-image', 'url(\"' + link.data.thumbnail + '\")');
+        } catch(e) {
         }
     })
     .fail(function(data) {
-        console.log(data);
     });
 };
 

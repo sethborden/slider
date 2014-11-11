@@ -198,6 +198,7 @@ $(document).ready(function() {
     $('#fetchButton').click(function(e) {
         e.preventDefault();
         $('.header-container').hide();
+        $('#sub-list').empty();
         hideForm();
         ss.setCookie(); //save your search options
         ss.reset(); //this is mostly doing ss.images = [];
